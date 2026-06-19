@@ -2,6 +2,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:nmc_wrapper/l10n/app_localizations.dart';
 import 'package:nmc_wrapper/repository/loginRepo/login.repo.dart';
 import 'package:nmc_wrapper/repository/registerRepo/register.repo.dart';
 import 'package:nmc_wrapper/repository/registerRepo/service.locator.dart';
@@ -21,7 +23,7 @@ void main() {
   runApp(AnnotatedRegion<SystemUiOverlayStyle>(
     value: SystemUiOverlayStyle.dark,
     child: MultiProvider(providers: [
-      ChangeNotifierProvider(create: (_) => LoginProvider()),
+
       ChangeNotifierProvider(create: (_) => RegisterProvider()),
 
     ], child: const MyApp()),
@@ -46,7 +48,9 @@ class AppView extends StatelessWidget {
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightTheme,
+      theme: ThemeData(
+        textTheme: GoogleFonts.notoSansTextTheme(),
+      ),
       locale: Locale('en'),
       // locale: getIt<LanguageProvider>().locale,
       supportedLocales: const [

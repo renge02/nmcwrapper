@@ -156,8 +156,8 @@ extension SnackBarExt on BuildContext {
     });
   }
 
-  showLoader({Widget? widget}) {
-    OverlayLoadingProgress.start(this, widget: widget);
+  showLoader({Widget? widget,bool fullScreen=false}) {
+    OverlayLoadingProgress.start(this, widget: widget,fullScreen: true);
   }
 
   hideLoader() {
