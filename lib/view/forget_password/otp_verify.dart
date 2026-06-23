@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:nmc_wrapper/utils/app_strings.dart';
 import 'package:nmc_wrapper/view/forget_password/reset_password.dart';
 import 'package:nmc_wrapper/view/login/login.dart';
 import 'package:pinput/pinput.dart';
@@ -69,9 +70,13 @@ class _OtpVerificationScreenState
     startTimer();
 
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text("OTP sent successfully"),
-      ),
+        SnackBar(
+        content: Text(
+          AppStrings.translate(
+            context,
+            'otp_sent_success',
+          ),
+        ),      ),
     );
   }
 
@@ -131,9 +136,12 @@ class _OtpVerificationScreenState
 
                   const SizedBox(height: 24),
 
-                  const Text(
-                    "Please check your mobile",
-                    textAlign: TextAlign.center,
+                    Text(
+                      AppStrings.translate(
+                        context,
+                        'please_check_mobile',
+                      ),
+                      textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 30,
                       fontWeight: FontWeight.w600,
@@ -151,7 +159,10 @@ class _OtpVerificationScreenState
                       ),
                       children: [
                         TextSpan(
-                          text: "We've sent a code to ",
+                          text: AppStrings.translate(
+                            context,
+                            'sent_code_to',
+                          ),
                         ),
                         TextSpan(
                           text: "******${widget.mobile.substring(widget.mobile.length - 4)}",
@@ -193,8 +204,11 @@ class _OtpVerificationScreenState
                   if (_secondsRemaining > 0)
                     Column(
                       children: [
-                        const Text(
-                          "Didn't get a code?",
+                          Text(
+                            AppStrings.translate(
+                              context,
+                              'didnt_get_code',
+                            ),
                           style: TextStyle(
                             fontSize: 18,
                             color: Colors.grey,
@@ -202,7 +216,7 @@ class _OtpVerificationScreenState
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          "Resend in $timerText",
+                          "${AppStrings.translate(context, 'resend_in')} $timerText",
                           style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.w600,
@@ -213,8 +227,11 @@ class _OtpVerificationScreenState
                   else
                     TextButton(
                       onPressed: resendOtp,
-                      child: const Text(
-                        "Resend OTP",
+                      child:   Text(
+                        AppStrings.translate(
+                          context,
+                          'resend_otp',
+                        ),
                         style: TextStyle(
                           fontSize: 18,
                           color: Colors.blue,
@@ -247,8 +264,11 @@ class _OtpVerificationScreenState
                                     14),
                               ),
                             ),
-                            child: const Text(
-                              "Cancel",
+                            child:   Text(
+                              AppStrings.translate(
+                                context,
+                                'cancel',
+                              ),
                               style: TextStyle(
                                 color:
                                 Color(0xFF8B1E1E),
@@ -298,9 +318,13 @@ class _OtpVerificationScreenState
 
                                     if (registered) {
                                       ScaffoldMessenger.of(context).showSnackBar(
-                                        const SnackBar(
-                                          content:
-                                          Text("Registration Successful"),
+                                          SnackBar(
+                                          content: Text(
+                                            AppStrings.translate(
+                                              context,
+                                              'registration_success',
+                                            ),
+                                          ),
                                         ),
                                       );
 
@@ -315,15 +339,21 @@ class _OtpVerificationScreenState
                                         SnackBar(
                                           content: Text(
                                          //   provider.error ??
-                                                "Registration failed",
+                                              AppStrings.translate(
+                                                context,
+                                                'registration_failed',
+                                              )
                                           ),
                                         ),
                                       );
                                     }
                                   } else {
                                     ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text("Invalid OTP"),
+                                        SnackBar(
+                                        content: Text( AppStrings.translate(
+                                          context,
+                                          'invalid_otp',
+                                        ),),
                                       ),
                                     );
                                   }
@@ -348,8 +378,11 @@ class _OtpVerificationScreenState
                                   );
                                 } else {
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text('Invalid OTP'),
+                                      SnackBar(
+                                      content: Text( AppStrings.translate(
+                                        context,
+                                        'invalid_otp',
+                                      ),),
                                     ),
                                   );
                                 }
@@ -368,8 +401,11 @@ class _OtpVerificationScreenState
                                     .circular(14),
                               ),
                             ),
-                            child: const Text(
-                              "Verify",
+                            child:   Text(
+                              AppStrings.translate(
+                                context,
+                                'verify',
+                              ),
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 18,

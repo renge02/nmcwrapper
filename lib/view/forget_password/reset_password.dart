@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nmc_wrapper/repository/registerRepo/register.repo.dart';
+import 'package:nmc_wrapper/utils/app_strings.dart';
 import 'package:nmc_wrapper/view/login/login.dart';
  import 'package:provider/provider.dart';
 
@@ -65,21 +66,29 @@ class _ResetPasswordScreenState
                   const SizedBox(height: 40),
 
                   /// USERNAME
-                  _buildLabel("Username"),
+                  _buildLabel(  AppStrings.translate(
+                    context,
+                    'username',
+                  ),),
 
                   const SizedBox(height: 12),
 
                   TextFormField(
                     controller: _usernameController,
                     decoration: _inputDecoration(
-                      "Enter your username",
-                    ),
+                      AppStrings.translate(
+                        context,
+                        'enter_username',
+                      ),                    ),
                   ),
 
                   const SizedBox(height: 30),
 
                   /// PASSWORD
-                  _buildLabel("New Password"),
+                  _buildLabel(  AppStrings.translate(
+                    context,
+                    'new_password',
+                  ),),
 
                   const SizedBox(height: 12),
 
@@ -87,7 +96,10 @@ class _ResetPasswordScreenState
                     controller: _passwordController,
                     obscureText: _hidePassword,
                     decoration: _inputDecoration(
-                      "Enter new password",
+                      AppStrings.translate(
+                        context,
+                        'enter_new_password',
+                      ),
                     ).copyWith(
                       suffixIcon: IconButton(
                         icon: Icon(
@@ -108,7 +120,10 @@ class _ResetPasswordScreenState
                   const SizedBox(height: 30),
 
                   /// CONFIRM PASSWORD
-                  _buildLabel("Confirm Password"),
+                  _buildLabel( AppStrings.translate(
+                    context,
+                    'confirm_password',
+                  ),),
 
                   const SizedBox(height: 12),
 
@@ -118,7 +133,10 @@ class _ResetPasswordScreenState
                     obscureText:
                     _hideConfirmPassword,
                     decoration: _inputDecoration(
-                      "Confirm new password",
+                      AppStrings.translate(
+                        context,
+                        'confirm_new_password',
+                      ),
                     ).copyWith(
                       suffixIcon: IconButton(
                         icon: Icon(
@@ -170,8 +188,11 @@ class _ResetPasswordScreenState
                                   color: Colors.grey,
                                 ),
                               ),
-                              child: const Text(
-                                "Cancel",
+                              child:   Text(
+                                AppStrings.translate(
+                                  context,
+                                  'cancel',
+                                ),
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontWeight:
@@ -199,10 +220,12 @@ class _ResetPasswordScreenState
                                   ScaffoldMessenger.of(
                                       context)
                                       .showSnackBar(
-                                    const SnackBar(
+                                      SnackBar(
                                       content: Text(
-                                        "Passwords do not match",
-                                      ),
+                                        AppStrings.translate(
+                                          context,
+                                          'password_not_match',
+                                        ),                                      ),
                                     ),
                                   );
                                   return;
@@ -221,8 +244,11 @@ class _ResetPasswordScreenState
 
                                 if (success) {
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text("Password reset successful"),
+                                      SnackBar(
+                                      content: Text(  AppStrings.translate(
+                                        context,
+                                        'password_reset_success',
+                                      ),),
                                     ),
                                   );
 
@@ -247,8 +273,11 @@ class _ResetPasswordScreenState
                                       14),
                                 ),
                               ),
-                              child: const Text(
-                                "Confirm",
+                              child:   Text(
+                                AppStrings.translate(
+                                  context,
+                                  'confirm',
+                                ),
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontWeight:

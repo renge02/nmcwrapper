@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:nmc_wrapper/repository/language/LanguageProvider.dart';
 import 'package:nmc_wrapper/repository/registerRepo/service.locator.dart';
+import 'package:nmc_wrapper/utils/app_strings.dart';
 import 'package:nmc_wrapper/utils/extensions.dart';
 import 'package:nmc_wrapper/utils/secure.storage.dart';
+import 'package:nmc_wrapper/view/important_contacts/helpline_screen.dart';
 import 'package:nmc_wrapper/view/shared/app.theme.dart';
 import 'package:nmc_wrapper/view/shared/widgets/custom_alert.dart';
+import 'package:nmc_wrapper/view/webview/webview.dart';
 import 'package:nmc_wrapper/view/webview/webview_Page.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class DashboardScreen extends StatefulWidget {
@@ -19,6 +24,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   String userName = '';
 
+  String? rolesString = '';
+
   @override
   void initState() {
     // TODO: implement initState
@@ -28,28 +35,29 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   Future<void> loadUserData() async {
     userName = await getIt<SecureStorage>().getUserName() ?? '';
+    rolesString = await getIt<SecureStorage>().getRole();
+
     setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
+    context.watch<LanguageProvider>();
+
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: const Color(0xFFF2E9E8),
-      // drawer: buildDrawer(),
+      drawer: buildDrawer(),
 
       /// APP BAR
       appBar: AppBar(
-        leading: CircleAvatar(
-          backgroundColor: Colors.white,
-          child: Text(
-            userName.isNotEmpty ? userName.trim()[0].toUpperCase() : "",
-            style: TextStyle(
-              color: AppTheme.appBarColor,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ).padding(EdgeInsets.all(12)),
+        leading: IconButton(
+          icon: const Icon(Icons.menu, color: Colors.white),
+          onPressed: () {
+            _scaffoldKey.currentState?.openDrawer();
+          },
+        ),
+
         elevation: 0,
         backgroundColor: AppTheme.appBarColor,
         titleSpacing: 0,
@@ -58,17 +66,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              'Hello, $userName',
-              style: TextStyle(fontSize: 14, color: Colors.white),
+              '${AppStrings.translate(context, 'hello')}, $userName',
+              style: GoogleFonts.notoSans(fontSize: 14, color: Colors.white),
             ),
             Text(
-              'Role: CITIZEN',
-              style: TextStyle(fontSize: 10, color: Colors.white),
+              '${AppStrings.translate(context, 'role')}: $rolesString',
+              style: GoogleFonts.notoSans(fontSize: 10, color: Colors.white),
             ),
           ],
         ),
         actions: [
-          /*
           PopupMenuButton<String>(
             icon: const Icon(Icons.language, color: Colors.white),
             color: Colors.white,
@@ -77,12 +84,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             onSelected: (value) {
               print("Selected Language: $value");
 
-              // Change language here
-              if (value == "en") {
-                // Get.updateLocale(const Locale('en', 'US'));
-              } else if (value == "mr") {
-                // Get.updateLocale(const Locale('mr', 'IN'));
-              }
+              context.read<LanguageProvider>().changeLanguage(value);
             },
             itemBuilder: (BuildContext context) => [
               const PopupMenuItem<String>(
@@ -101,13 +103,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
             ],
           ),
-*/
-          IconButton(
+          /*   IconButton(
             onPressed: () {
               showLogoutAlert(context: context);
             },
             icon: const Icon(Icons.logout_rounded, color: Colors.white),
-          ),
+          ),*/
         ],
       ),
 
@@ -115,10 +116,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              buildSection(title: "All Services", items: services),
+              buildSection(
+                title: AppStrings.translate(context, 'all_services'),
+                items: services,
+              ),
 
-              buildSection(title: "Civic Services", items: civicServices),
-              buildSection(title: "Connect Now", items: socialMediaServices),
+              buildSection(
+                title: AppStrings.translate(context, 'civic_services'),
+                items: civicServices,
+              ),
+              buildSection(
+                title: AppStrings.translate(context, 'connect_now'),
+                items: socialMediaServices,
+              ),
             ],
           ),
         ),
@@ -127,98 +137,181 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Widget buildDrawer() {
+    String getInitials(String name) {
+      if (name.trim().isEmpty) return "";
+
+      List<String> parts = name.trim().split(" ");
+
+      if (parts.length == 1) {
+        return parts.first[0].toUpperCase();
+      }
+
+      return "${parts.first[0]}${parts.last[0]}".toUpperCase();
+    }
+
     return Drawer(
-      child: Column(
-        children: [
-          DrawerHeader(
-            decoration: const BoxDecoration(color: AppTheme.appBarColor),
-
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-
-              children: [
-                CircleAvatar(
-                  radius: 35,
-
-                  backgroundColor: Colors.white,
-
-                  child: Text(
-                    userName.isNotEmpty ? userName[0].toUpperCase() : "",
-
-                    style: const TextStyle(
-                      fontSize: 30,
-
-                      color: AppTheme.appBarColor,
-
-                      fontWeight: FontWeight.bold,
+      child: SafeArea(
+        child: Column(
+          children: [
+            /// Header
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 16),
+              color: AppTheme.appBarColor,
+              child: Column(
+                children: [
+                  CircleAvatar(
+                    radius: 35,
+                    backgroundColor: Colors.white,
+                    child: Text(
+                      getInitials(userName),
+                      style: GoogleFonts.notoSans(
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                        color: AppTheme.appBarColor,
+                      ),
                     ),
                   ),
-                ),
 
-                const SizedBox(height: 12),
+                  const SizedBox(height: 12),
 
-                Text(
-                  userName,
-
-                  style: GoogleFonts.notoSans(
-                    color: Colors.white,
-
-                    fontSize: 18,
-
-                    fontWeight: FontWeight.w600,
+                  Text(
+                    userName,
+                    style: GoogleFonts.notoSans(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
-                ),
 
-                Text(
-                  "Citizen",
+                  const SizedBox(height: 4),
 
-                  style: GoogleFonts.notoSans(
-                    color: Colors.white70,
-
-                    fontSize: 14,
+                  Text(
+                    '$rolesString',
+                    style: GoogleFonts.notoSans(
+                      color: Colors.white70,
+                      fontSize: 14,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
+
+            const SizedBox(height: 10),
+
+            buildDrawerItem(
+              Icons.person_outline,
+              AppStrings.translate(context, 'profile'),
+              () {},
+            ),
+
+            emergencyDrawerItem(),
+
+            const Spacer(),
+
+            const Divider(),
+
+            buildDrawerItem(
+              Icons.logout,
+              AppStrings.translate(context, 'logout'),
+              () {
+                Navigator.pop(context);
+                showLogoutAlert(context: context);
+              },
+              iconColor: AppTheme.appBarColor,
+              textColor: AppTheme.appBarColor,
+            ),
+
+            const SizedBox(height: 16),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildDrawerItem(
+    IconData icon,
+    String title,
+    VoidCallback onTap, {
+    Color iconColor = Colors.black87,
+    Color textColor = Colors.black87,
+  }) {
+    return ListTile(
+      leading: Icon(icon, color: iconColor),
+      title: Text(
+        title,
+        style: GoogleFonts.notoSans(
+          color: textColor,
+          fontSize: 15,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+      onTap: onTap,
+    );
+  }
+
+  Widget emergencyDrawerItem() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          /// Header
+          Row(
+            children: [
+              Text(
+                AppStrings.translate(context, 'emergency_use_only'),
+                style: GoogleFonts.notoSans(
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
           ),
 
-          buildDrawerItem(Icons.home_outlined, "Home", () {}),
-
-          buildDrawerItem(Icons.person_outline, "Profile", () {}),
-
-          buildDrawerItem(Icons.language, "Change Language", () {}),
-
-          buildDrawerItem(Icons.help_outline, "Help & Support", () {}),
-
-          buildDrawerItem(Icons.info_outline, "About Us", () {}),
-
-          const Spacer(),
-
-          const Divider(),
-
-          buildDrawerItem(Icons.logout, "Logout", () {
-            Navigator.pop(context);
-
-            showLogoutAlert(context: context);
-          }),
-
           const SizedBox(height: 20),
+
+          emergencyTile(AppStrings.translate(context, 'police'), "100"),
+          emergencyTile(AppStrings.translate(context, 'ambulance'), "108"),
+          emergencyTile(AppStrings.translate(context, 'fire_brigade'), "101"),
+          emergencyTile(
+            AppStrings.translate(context, 'nmc_call_center'),
+            "7030300300",
+          ),
         ],
       ),
     );
   }
 
-  Widget buildDrawerItem(IconData icon, String title, VoidCallback onTap) {
-    return ListTile(
-      leading: Icon(icon, color: AppTheme.appBarColor),
+  Widget emergencyTile(String title, String number) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 18),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              title,
+              style: GoogleFonts.notoSans(
+                fontSize: 15,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
 
-      title: Text(
-        title,
-
-        style: GoogleFonts.notoSans(fontSize: 15, fontWeight: FontWeight.w500),
+          InkWell(
+            onTap: () {
+              // Call functionality
+              launchUrl(Uri.parse("tel:$number"));
+            },
+            child: CircleAvatar(
+              radius: 16,
+              backgroundColor: Color(0xff1ABC9C),
+              child: const Icon(Icons.call, size: 15, color: Colors.white),
+            ),
+          ),
+        ],
       ),
-
-      onTap: onTap,
     );
   }
 
@@ -285,10 +378,10 @@ class ServiceCard extends StatelessWidget {
                     Image.asset(item.image, width: 18, height: 18),
                     const SizedBox(height: 5),
                     Text(
-                      item.title,
+                      AppStrings.translate(context, item.title),
                       textAlign: TextAlign.center,
                       maxLines: 5,
-                      style: const TextStyle(fontSize: 10),
+                      style: GoogleFonts.notoSans(fontSize: 10),
                     ),
                   ],
                 )
@@ -313,158 +406,168 @@ class Service {
 
 List<Service> services = [
   Service(
-    "Grievance\nRedressal",
+    'grievance_redressal',
     "assets/images/sentiment_emoji.png",
     onTap: (context) async {
       String token = await getIt<SecureStorage>().getToken() ?? '';
       String userData = await getIt<SecureStorage>().getUserData() ?? '';
-        String webUrl = 'https://dev-upyog.nmc.gov.in/upyog-ui/citizen/pgr-home';
-      context.pushWidget(WebDashboardPage(webUrl:webUrl,token: token, userData: userData));
-    },
-  ),
-
-  Service(
-    "Marriage\nRegistration",
-    "assets/images/marriage_regis.png",
-/*    onTap: (context) async {
-      String token = await getIt<SecureStorage>().getToken() ?? '';
-      String userData = await getIt<SecureStorage>().getUserData() ?? '';
-
-      String webUrl='https://dev-upyog.nmc.gov.in/nmc/en/investor/services/968.0/apply/1?tenantId=pg&logoutRedirectUrl=https%3A%2F%2Fdev-upyog.nmc.gov.in%2Fupyog-ui%2Fcitizen%2Fbap-logout';
-      context.pushWidget(WebDashboardPage(webUrl:webUrl,token: token, userData: userData));
-
-    },*/
-    onTap: (context) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Coming soon'),
-        ),
-      );},
-  ),
-  Service(
-    "Challan\nPayment",
-    "assets/images/accounting_bal.png",
-    onTap: (context) async {
-      String token = await getIt<SecureStorage>().getToken() ?? '';
-      String userData = await getIt<SecureStorage>().getUserData() ?? '';
-      final String webUrl = 'https://dev-upyog.nmc.gov.in/upyog-ui/citizen/mcollect-home';
-
-      context.pushWidget(WebDashboardPage(webUrl:webUrl,token: token, userData: userData));
-    },
-  ),
-  Service(
-    "Trade\nLicense",
-    "assets/images/trade_lic.png",
-    onTap: (context) {
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Coming soon'),
-        ),
+      String webUrl = 'https://dev-upyog.nmc.gov.in/upyog-ui/citizen/pgr-home';
+      context.pushWidget(
+        WebPage(webUrl: webUrl, token: token, userData: userData),
       );
     },
   ),
 
   Service(
-    "Hoarding\nPermission",
+    "marriage_registration",
+    "assets/images/marriage_regis.png",
+    onTap: (context) async {
+      String accessToken = await getIt<SecureStorage>().getToken() ?? '';
+      String userData = await getIt<SecureStorage>().getUserData() ?? '';
+
+      String tenantId = "pg";
+      String logoutRedirectUrl =
+          "https://dev-upyog.nmc.gov.in/upyog-ui/citizen/bap-logout";
+
+      String webUrl =
+          "https://dev-upyog.nmc.gov.in/nmc/en/investor/services/968.0/apply/1"
+          "?accessToken=$accessToken"
+          "&tenantId=$tenantId"
+          "&logoutRedirectUrl=${Uri.encodeComponent(logoutRedirectUrl)}";
+
+      context.pushWidget(
+        WebPage(
+          webUrl: webUrl,
+          token: accessToken,
+          userData: userData,
+        ),
+      );
+    },
+  ),
+  Service(
+    "challan_payment",
+    "assets/images/accounting_bal.png",
+    onTap: (context) async {
+      String token = await getIt<SecureStorage>().getToken() ?? '';
+      String userData = await getIt<SecureStorage>().getUserData() ?? '';
+      final String webUrl =
+          'https://dev-upyog.nmc.gov.in/upyog-ui/citizen/mcollect-home';
+
+      context.pushWidget(
+        WebPage(webUrl: webUrl, token: token, userData: userData),
+      );
+    },
+  ),
+  Service(
+    "trade_license",
+    "assets/images/trade_lic.png",
+    onTap: (context) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(AppStrings.translate(context, 'coming_soon'))),
+      );
+    },
+  ),
+
+  Service(
+    "hoarding_permission",
     "assets/images/hoarding_per.png",
     onTap: (context) {
       ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Coming soon'),
-      ),
-    );},
+        SnackBar(content: Text(AppStrings.translate(context, 'coming_soon'))),
+      );
+    },
   ),
 
   Service(
-    "Tree Cutting\nPermission",
+    "tree_cutting_permission",
     "assets/images/tree.png",
     onTap: (context) {
       ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Coming soon'),
-      ),
-    );},
+        SnackBar(content: Text(AppStrings.translate(context, 'coming_soon'))),
+      );
+    },
   ),
 
   Service(
-    "NOC\nIssuance",
+    "noc_issuance",
     "assets/images/noc.png",
     onTap: (context) {
       ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Coming soon'),
-      ),
-    );},
+        SnackBar(content: Text(AppStrings.translate(context, 'coming_soon'))),
+      );
+    },
   ),
 
   Service(
-    "Water &\nSewerage\nConnection",
+    "water_connection",
     "assets/images/home.png",
     onTap: (context) {
       ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Coming soon'),
-      ),
-    );},
+        SnackBar(content: Text(AppStrings.translate(context, 'coming_soon'))),
+      );
+    },
   ),
 
   Service(
-    "Birth & Death Registration",
+    "birth_death",
     "assets/images/p_women.png",
     onTap: (context) {
       ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Coming soon'),
-      ),
-    );},
+        SnackBar(content: Text(AppStrings.translate(context, 'coming_soon'))),
+      );
+    },
   ),
 
   Service(
-    "Health Facility Registration",
+    "health_facility",
     "assets/images/hospital.png",
     onTap: (context) {
       ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Coming soon'),
-      ),
-    );},
+        SnackBar(content: Text(AppStrings.translate(context, 'coming_soon'))),
+      );
+    },
   ),
 
   Service(
-    "Property\nTax",
+    "property_tax",
     "assets/images/property_tax.png",
     onTap: (context) {
-      openUrl( "https://propertytax.nmctax.in/");
-      },
+      openUrl("https://propertytax.nmctax.in/");
+    },
   ),
 ];
 
 List<Service> civicServices = [
   Service(
-    "Civic\nServices",
+    "civic_services",
     "assets/images/family.png",
     onTap: (context) {
       openUrl('https://civicservices.nmc.gov.in/login');
-      },
+    },
   ),
 
-  Service("NMC\nNEWS", "assets/images/news.png",  onTap: (context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Coming soon'),
-      ),
-    );},),
-
-  Service("FAQ", "assets/images/faq.png",   onTap: (context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Coming soon'),
-      ),
-    );},),
+  Service(
+    "news",
+    "assets/images/news.png",
+    onTap: (context) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(AppStrings.translate(context, 'coming_soon'))),
+      );
+    },
+  ),
 
   Service(
-    "NMC\nHelp Centre",
+    "faq",
+    "assets/images/faq.png",
+    onTap: (context) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(AppStrings.translate(context, 'coming_soon'))),
+      );
+    },
+  ),
+
+  Service(
+    "nmc_help_center",
     "assets/images/help.png",
     onTap: (context) {
       callFunction(context);
@@ -472,49 +575,46 @@ List<Service> civicServices = [
   ),
 
   Service(
-    "Know our\nWorks",
+    "know_our_works",
     "assets/images/work.png",
-      onTap: (context) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Coming soon'),
-          ),
-        );},
+    onTap: (context) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(AppStrings.translate(context, 'coming_soon'))),
+      );
+    },
   ),
 
   Service(
-    "Elected\nMembers",
+    "elected_members",
     "assets/images/election.png",
     onTap: (context) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Coming soon'),
-        ),
-      );},
+        SnackBar(content: Text(AppStrings.translate(context, 'coming_soon'))),
+      );
+    },
   ),
 
-  Service("Administration", "assets/images/admin.png",   onTap: (context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Coming soon'),
-      ),
-    );},),
+  Service(
+    "administration",
+    "assets/images/admin.png",
+    onTap: (context) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(AppStrings.translate(context, 'coming_soon'))),
+      );
+    },
+  ),
 
   Service(
-    "Important\nContacts",
+    "important_contacts",
     "assets/images/add_call.png",
     onTap: (context) {
-      openUrl('https://nmc.gov.in/home/getfrontpage/7/191/E#tabs|History:tab1');
-
+      // openUrl('https://nmc.gov.in/home/getfrontpage/7/191/E#tabs|History:tab1');
+      context.pushWidget(HelplineScreen());
     },
   ),
 ];
 
-
-callFunction(
-    BuildContext context,
-
-    ) {
+callFunction(BuildContext context) {
   return showModalBottomSheet(
     context: context,
     builder: (context) {
@@ -525,10 +625,9 @@ callFunction(
             padding: const EdgeInsets.all(18.0),
             child: ListTile(
               leading: const Icon(Icons.call),
-              title: const Text('NMC help center(Available from 7AM to 11PM)'),
+              title: Text(AppStrings.translate(context, 'help_center_timing')),
               subtitle: Text("7030300300"),
-              onTap: () =>  makePhoneCall("7030300300"),
-
+              onTap: () => makePhoneCall("7030300300"),
             ),
           ),
         ],
@@ -581,13 +680,9 @@ Future<void> openUrl(String url) async {
 }
 
 Future<void> makePhoneCall(String phoneNumber) async {
-  final Uri uri = Uri(
-    scheme: 'tel',
-    path: phoneNumber,
-  );
+  final Uri uri = Uri(scheme: 'tel', path: phoneNumber);
 
   if (await canLaunchUrl(uri)) {
     await launchUrl(uri);
   }
 }
-

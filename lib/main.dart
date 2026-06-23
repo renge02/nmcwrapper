@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:nmc_wrapper/l10n/app_localizations.dart';
+import 'package:nmc_wrapper/repository/language/LanguageProvider.dart';
 import 'package:nmc_wrapper/repository/loginRepo/login.repo.dart';
 import 'package:nmc_wrapper/repository/registerRepo/register.repo.dart';
 import 'package:nmc_wrapper/repository/registerRepo/service.locator.dart';
@@ -16,18 +17,26 @@ import 'package:nmc_wrapper/view/shared/app.theme.dart';
 import 'package:provider/provider.dart';
 import 'l10n/app_localizations.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   setupLocator();
 
-  runApp(AnnotatedRegion<SystemUiOverlayStyle>(
-    value: SystemUiOverlayStyle.dark,
-    child: MultiProvider(providers: [
+  final languageProvider = LanguageProvider();
 
-      ChangeNotifierProvider(create: (_) => RegisterProvider()),
+  await languageProvider.loadLanguage();
 
-    ], child: const MyApp()),
-  ));
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider.value(value: languageProvider),
+
+        ChangeNotifierProvider(create: (_) => RegisterProvider()),
+      ],
+
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -46,36 +55,30 @@ class AppView extends StatelessWidget {
   Widget build(BuildContext context) {
     final customObserver = CustomRouteObserver();
 
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        textTheme: GoogleFonts.notoSansTextTheme(),
-      ),
-      locale: Locale('en'),
-      // locale: getIt<LanguageProvider>().locale,
-      supportedLocales: const [
-        Locale('en'),
-        Locale('mr'),
-      ],
-      localizationsDelegates: const [
-        AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      home: const SplashScreen(),
-      themeMode: ThemeMode.system,
-      navigatorObservers: [customObserver],
-      builder: (context, child) {
-        final mediaQueryData = MediaQuery.of(context);
-        final textScaler = mediaQueryData.textScaler.clamp(
-          minScaleFactor: 0.9,
-          maxScaleFactor: 1.3,
-        );
+    return Consumer<LanguageProvider>(
+      builder: (_, provider, _) {
+        print(provider.locale);
 
-        return MediaQuery(
-          data: mediaQueryData.copyWith(textScaler: textScaler),
-          child: child!,
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+
+          locale: provider.locale,
+
+          supportedLocales: const [Locale('en'), Locale('mr')],
+
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+
+            GlobalMaterialLocalizations.delegate,
+
+            GlobalWidgetsLocalizations.delegate,
+
+            GlobalCupertinoLocalizations.delegate,
+          ],
+
+          home: const SplashScreen(),
+
+          navigatorObservers: [customObserver],
         );
       },
     );
@@ -95,8 +98,6 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
     moveNext(2);
   }
-
-
 
   moveNextOLD(int time) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -127,16 +128,12 @@ class _SplashScreenState extends State<SplashScreen> {
           if (value != null) {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(
-                builder: (_) => const DashboardScreen(),
-              ),
+              MaterialPageRoute(builder: (_) => const DashboardScreen()),
             );
           } else {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(
-                builder: (_) => const LoginScreen(),
-              ),
+              MaterialPageRoute(builder: (_) => const LoginScreen()),
             );
           }
         } catch (e, stack) {
@@ -147,18 +144,17 @@ class _SplashScreenState extends State<SplashScreen> {
 
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(
-              builder: (_) => const LoginScreen(),
-            ),
+            MaterialPageRoute(builder: (_) => const LoginScreen()),
           );
         }
       });
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body:  Stack(
+      body: Stack(
         alignment: AlignmentGeometry.bottomCenter,
         children: [
           SizedBox(
@@ -169,7 +165,6 @@ class _SplashScreenState extends State<SplashScreen> {
               fit: BoxFit.fitHeight,
             ),
           ),
-
         ],
       ),
     );

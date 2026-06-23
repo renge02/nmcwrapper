@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nmc_wrapper/repository/registerRepo/register.repo.dart';
+import 'package:nmc_wrapper/utils/app_strings.dart';
 
 import 'package:nmc_wrapper/utils/extensions.dart';
 import 'package:nmc_wrapper/view/shared/widgets/custom_text_field.dart';
@@ -43,9 +44,12 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
                       const SizedBox(height: 30),
 
-                      const Text(
-                        "Forgot Password? Enter registered mobile number",
-                        textAlign: TextAlign.center,
+                        Text(
+                          AppStrings.translate(
+                            context,
+                            'forgot_password',
+                          ),
+                          textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.w500,
@@ -66,7 +70,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         textController: mobileController,
                         validator: (value) {
                           if (value!.trim().isEmpty || value.length != 10) {
-                            return 'Please enter 10 digit mobile';
+                            return AppStrings.translate(
+                                context,
+                                'enter_mobile');
                           }
 
                           return null;
@@ -94,8 +100,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                     borderRadius: BorderRadius.circular(14),
                                   ),
                                 ),
-                                child: const Text(
-                                  "Cancel",
+                                child:   Text(
+                                  AppStrings.translate(
+                                      context,
+                                      'cancel'),
                                   style: TextStyle(
                                     color: Color(0xFF8B1E1E),
                                     fontSize: 18,
@@ -132,8 +140,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                     );
                                   } else {
                                     ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text('Failed to send OTP'),
+                                        SnackBar(
+                                        content: Text(
+                                          AppStrings.translate(
+                                              context,
+                                              'failed_otp'),),
                                       ),
                                     );
                                   }
@@ -144,8 +155,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                     borderRadius: BorderRadius.circular(14),
                                   ),
                                 ),
-                                child: const Text(
-                                  "Send OTP",
+                                child:   Text(
+
+                                  AppStrings.translate(
+                                      context,
+                                      'send_otp'),
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 18,

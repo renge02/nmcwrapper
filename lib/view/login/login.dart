@@ -9,6 +9,8 @@ import 'package:nmc_wrapper/view/shared/widgets/custom_alert.dart';
 import 'package:nmc_wrapper/view/shared/widgets/custom_text_field.dart';
 import 'package:provider/provider.dart';
 
+import '../../utils/app_strings.dart';
+
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -39,11 +41,12 @@ class _LoginScreenState extends State<LoginScreen> {
         value: provider,
         child: Consumer<LoginProvider>(
           builder: (ctx, provider, _) {
-            provider.isLoading ? context.showLoader(fullScreen: true) : context.hideLoader();
+            provider.isLoading
+                ? context.showLoader(fullScreen: true)
+                : context.hideLoader();
 
             if (provider.error != null) {
-              showAlert(context,
-                  'Unable to login, kindly check your internet connection');
+              showAlert(context, 'Unable to login, ${provider.error}');
             }
 
             if (provider.data != null) {
@@ -83,8 +86,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
                               Row(
                                 children: [
-                                  const Text(
-                                    'Citizen Login',
+                                  Text(
+                                    AppStrings.translate(context, 'login'),
                                     style: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
@@ -97,7 +100,10 @@ class _LoginScreenState extends State<LoginScreen> {
                               12.height(),
 
                               CustomTextField(
-                                title: 'User Name',
+                                title: AppStrings.translate(
+                                  context,
+                                  'username',
+                                ),
                                 showRequiredSign: true,
                                 textInputType: TextInputType.emailAddress,
                                 textInputAction: TextInputAction.next,
@@ -106,7 +112,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                 textController: userNameController,
                                 validator: (value) {
                                   if (value!.trim().isEmpty) {
-                                    return 'Please enter username';
+                                    return AppStrings.translate(
+                                      context,
+                                      'enter_username',
+                                    );
                                   }
 
                                   return null;
@@ -117,7 +126,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
                               /// PASSWORD
                               CustomTextField(
-                                title: 'Password',
+                                title: AppStrings.translate(
+                                  context,
+                                  'password',
+                                ),
                                 showRequiredSign: true,
                                 textInputType: TextInputType.emailAddress,
                                 textInputAction: TextInputAction.done,
@@ -128,7 +140,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                 validator: (value) {
                                   if (value!.trim().isEmpty ||
                                       value.length < 6) {
-                                    return 'Enter 6 digit password';
+                                    return AppStrings.translate(
+                                      context,
+                                      'enter_password',
+                                    );
                                   }
 
                                   return null;
@@ -141,11 +156,15 @@ class _LoginScreenState extends State<LoginScreen> {
                                 children: [
                                   GestureDetector(
                                     onTap: () {
-                                      context
-                                          .pushWidget(ForgotPasswordScreen());
+                                      context.pushWidget(
+                                        ForgotPasswordScreen(),
+                                      );
                                     },
-                                    child: const Text(
-                                      'Forgot Password?',
+                                    child: Text(
+                                      AppStrings.translate(
+                                        context,
+                                        'forgot_password',
+                                      ),
                                       style: TextStyle(
                                         color: Colors.blue,
                                         fontSize: 14,
@@ -179,8 +198,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                       );
                                     }
                                   },
-                                  child: const Text(
-                                    'Continue',
+                                  child: Text(
+                                    AppStrings.translate(context, 'continue'),
                                     style: TextStyle(
                                       fontSize: 16,
                                       color: Colors.white,
@@ -194,8 +213,11 @@ class _LoginScreenState extends State<LoginScreen> {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  const Text(
-                                    "Don’t have an account? ",
+                                  Text(
+                                    AppStrings.translate(
+                                      context,
+                                      'dont_have_account',
+                                    ),
                                     style: TextStyle(
                                       fontSize: 16,
                                       color: Colors.black,
@@ -206,8 +228,11 @@ class _LoginScreenState extends State<LoginScreen> {
                                       // Navigate to Register Screen
                                       context.pushWidget(RegistrationScreen());
                                     },
-                                    child: const Text(
-                                      "Register here",
+                                    child: Text(
+                                      AppStrings.translate(
+                                        context,
+                                        'register_here',
+                                      ),
                                       style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold,
@@ -220,8 +245,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
                               12.height(),
 
-                              const Text(
-                                'Version v1.1',
+                              Text(
+                                AppStrings.translate(context, 'version'),
                                 style: TextStyle(
                                   fontSize: 12,
                                   color: Colors.grey,
@@ -237,8 +262,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     width: double.infinity,
                     color: const Color(0xFF7A1236),
                     padding: const EdgeInsets.all(12),
-                    child: const Text(
-                      '© 2026 Copyright | Nashik Municipal Corporation | Government of Maharashtra | All rights Reserved',
+                    child: Text(
+                      AppStrings.translate(context, 'copyright'),
                       textAlign: TextAlign.center,
                       style: TextStyle(color: Colors.white, fontSize: 11),
                     ),

@@ -5,15 +5,18 @@ Future<DateTime?> pickDate({
   required DateTime initialDate,
   DateTime? firstDate,
   DateTime? lastDate,
+  Locale? locale,
 }) async {
   final ThemeData theme = Theme.of(context);
   final Brightness brightness = theme.brightness;
 
   final DateTime? selectedDate = await showDatePicker(
     context: context,
+    locale: locale, // <---
     initialDate: initialDate,
     firstDate: firstDate ?? DateTime(1950),
     lastDate: lastDate ?? DateTime.now(),
+
     builder: (context, child) {
       if (child == null) return const SizedBox();
 

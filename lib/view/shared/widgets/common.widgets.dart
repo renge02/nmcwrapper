@@ -14,26 +14,3 @@ Widget progressBar() {
   );
 }
 
-Widget pgrTitleWidget(BuildContext context) {
-  final localizations = AppLocalizations.of(context)!;
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-        Text(
-        localizations.applicationFor,
-        style: TextStyle(
-          fontSize: 12,
-          color: Colors.black54,
-        ),
-      ),
-        Text(
-        localizations.publicGrievance,
-        style: TextStyle(
-          fontSize: 24,
-          fontWeight: FontWeight.bold,
-          color: Color(0xFF8B1E1E),
-        ),
-      ),
-    ],
-  );
-}

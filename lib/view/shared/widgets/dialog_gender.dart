@@ -1,9 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:nmc_wrapper/utils/app_strings.dart';
 import 'package:nmc_wrapper/utils/extensions.dart';
 import 'package:nmc_wrapper/utils/logger.dart';
 
 Future<String?> pickGender(BuildContext context) async {
-  List<String> gender = ['Male', 'Female', 'Other'];
+
+  final List<Map<String, String>> genders = [
+    {
+      "value": "Male",
+      "label": AppStrings.translate(context, 'male'),
+    },
+    {
+      "value": "Female",
+      "label": AppStrings.translate(context, 'female'),
+    },
+    {
+      "value": "Other",
+      "label": AppStrings.translate(context, 'other'),
+    },
+  ];
   String? selected = await showDialog(
       context: context,
       builder: (_) {
@@ -12,21 +27,25 @@ Future<String?> pickGender(BuildContext context) async {
           insetPadding: EdgeInsets.symmetric(horizontal: 40, vertical: 24),
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
-          child: getChild(context, gender),
+          child: getChild(context, genders),
         );
       });
   logger('selected=$selected');
   return selected;
 }
 
-Widget getChild(BuildContext context, List<String> gender) {
+Widget getChild(BuildContext context,
+    List<Map<String, String>> genders,
+    ) {
   return Column(
     mainAxisSize: MainAxisSize.min,
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       Padding(
         padding: const EdgeInsets.only(top: 12, left: 12),
-        child: Text("Pick Gender", style: context.bodyMedium()),
+        child: Text(
+            AppStrings.translate(context, 'pick_gender'),
+            style: context.bodyMedium()),
       ),
       Divider(
         height: 12,
@@ -36,14 +55,15 @@ Widget getChild(BuildContext context, List<String> gender) {
       Flexible(
         child: ListView.builder(
           shrinkWrap: true,
-          itemCount: gender.length,
+          itemCount: genders.length,
           itemBuilder: (ctx, index) {
             return ListTile(
               dense: true,
               onTap: () {
-                ctx.pop(arguments: gender[index]);
+                ctx.pop(arguments: genders[index]['value'],
+                );
               },
-              title: Text(gender[index], style: context.bodyMedium()),
+              title: Text(genders[index]['label']!, style: context.bodyMedium()),
             );
           },
         ),

@@ -18,6 +18,8 @@ class SecureStorage {
   static const String _userIdsKey = "user_ids";
   static const String _userNameKey = "userName";
   static const String _userMobileNumberKey = "mobileNumber";
+  static const String _role = "role";
+  static const String _language = "language";
 
   // Save token
   Future<void> saveToken(String token) async {
@@ -36,6 +38,15 @@ class SecureStorage {
 
   Future<String?> getRefreshToken() async {
     return await _storage.read(key: _refreshTokenKey);
+  }
+
+  // Save refresh token
+  Future<void> saveRole(String token) async {
+    await _storage.write(key: _role, value: token);
+  }
+
+  Future<String?> getRole() async {
+    return await _storage.read(key: _role);
   }
 
   // Save User Data (JSON string)
@@ -67,6 +78,14 @@ class SecureStorage {
 
   Future<String?> getUserMobileNumber() async {
     return await _storage.read(key: _userMobileNumberKey);
+  }
+
+  Future<void> saveLanguage(String language) async {
+    await _storage.write(key: _language, value: language);
+  }
+
+  Future<String?> getLanguage() async {
+    return await _storage.read(key: _language);
   }
 
   // Delete specific key

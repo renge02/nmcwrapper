@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 import 'package:nmc_wrapper/repository/loginRepo/login.service.dart';
@@ -21,6 +22,7 @@ class LoginProvider extends ChangeNotifier {
       notifyListeners();
 
       final response = await _service.login(userName, password);
+      logger("Login Response....: ${response}");
 
       data = response.data;
       logger("Login Response: ${jsonEncode(data)}");
@@ -30,10 +32,30 @@ class LoginProvider extends ChangeNotifier {
       await getIt<SecureStorage>().saveUserMobileNumber(data['UserRequest']['mobileNumber']);
       await getIt<SecureStorage>().saveToken(data['access_token']);
       await getIt<SecureStorage>().saveRefreshToken(data['refresh_token']);
+      if(data['UserRequest']!=null) {
+        await getIt<SecureStorage>().saveRole(data['UserRequest']['roles'][0]['name']);
+      }
+
       await getIt<SecureStorage>()
           .saveUserData(jsonEncode(data['UserRequest']));
-    } catch (e) {
+
+    }on DioException catch (e) {
+
+      logger("Status Code : ${e.response?.statusCode}");
+      logger("Error Response : ${e.response?.data}");
+
+      if (e.response != null) {
+        error = e.response?.data['error_description'] ??
+            e.response?.data['error'] ??
+            'Something went wrong';
+      } else {
+        error = e.message;
+      }
+
+    }  catch (e) {
       error = e.toString();
+      logger("Login Error: ${error}");
+
     } finally {
       isLoading = false;
       notifyListeners();

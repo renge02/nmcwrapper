@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:nmc_wrapper/repository/language/LanguageProvider.dart';
 import 'package:nmc_wrapper/repository/registerRepo/register.repo.dart';
+import 'package:nmc_wrapper/utils/app_strings.dart';
 import 'package:nmc_wrapper/utils/extensions.dart';
 import 'package:nmc_wrapper/utils/logger.dart';
 import 'package:nmc_wrapper/utils/validators.dart';
@@ -42,7 +44,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   String? emailMessage;
   String? selectedGender;
 
-  final List<String> genders = ['Male', 'Female', 'Other'];
 
   final TextEditingController dobController = TextEditingController();
 
@@ -147,8 +148,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                               6.height(),
                               Row(
                                 children: [
-                                  const Text(
-                                    'Citizen Registration',
+                                    Text(
+                                      AppStrings.translate(context,'citizen_registration'),
                                     style: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
@@ -158,28 +159,32 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                 ],
                               ),
                               CustomTextField(
-                                title: 'Full Name',
-                                showRequiredSign: true,
+                                title: AppStrings.translate(context,'full_name'),                                showRequiredSign: true,
                                 textInputAction: TextInputAction.next,
                                 length: 80,
                                 lines: 1,
                                 textController: fullNameController,
                                 validator: (value) {
                                   if (value!.trim().isEmpty) {
-                                    return 'Please enter full name';
-                                  }
+                                    return AppStrings.translate(
+                                        context,
+                                        'please_enter_full_name'
+                                    );                                  }
 
                                   return null;
                                 },
                               ),
                               CustomTextField(
-                                title: 'DOB',
+                                title: AppStrings.translate(context,'dob'),
                                 showRequiredSign: true,
                                 textInputAction: TextInputAction.next,
                                 textController: dobController,
                                 readOnly: true,
                                 onTap: () async {
+                                  final locale = context.read<LanguageProvider>().locale;
+
                                   var dob = await pickDate(
+                                    locale: locale,
                                     context: context,
                                     initialDate: DateTime.now(),
                                   );
@@ -191,8 +196,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                 suffix: Icon(Icons.calendar_month, size: 24),
                                 validator: (value) {
                                   if (value!.trim().isEmpty) {
-                                    return 'select DOB';
-                                  }
+                                    return AppStrings.translate(
+                                        context,
+                                        'select_dob'
+                                    );                                  }
 
                                   return null;
                                 },
@@ -225,7 +232,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                   }
                                 },
                                 child: CustomTextField(
-                                  title: 'Mobile',
+                                  title: AppStrings.translate(context,'mobile'),
                                   showRequiredSign: true,
                                   textInputType: TextInputType.phone,
                                   textInputAction: TextInputAction.next,
@@ -236,19 +243,23 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                     if (value == null ||
                                         value.trim().isEmpty ||
                                         value.length != 10) {
-                                      return 'Please enter 10 digit mobile';
-                                    }
+                                      return AppStrings.translate(
+                                          context,
+                                          'enter_mobile'
+                                      );                                    }
 
                                     if (!isMobileAvailable) {
-                                      return 'Mobile number already registered';
-                                    }
+                                      return AppStrings.translate(
+                                          context,
+                                          'mobile_registered'
+                                      );                                    }
 
                                     return null;
                                   },
                                 ),
                               ),
                               CustomTextField(
-                                title: 'User Name',
+                                title: AppStrings.translate(context,'username'),
                                 showRequiredSign: true,
                                 textInputType: TextInputType.emailAddress,
                                 textInputAction: TextInputAction.next,
@@ -257,8 +268,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                 textController: userNameController,
                                 validator: (value) {
                                   if (value!.trim().isEmpty) {
-                                    return 'Please enter username';
-                                  }
+                                    return AppStrings.translate(
+                                        context,
+                                        'enter_username'
+                                    );                                  }
 
                                   return null;
                                 },
@@ -268,18 +281,22 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                 textInputAction: TextInputAction.next,
                                 length: 20,
                                 lines: 1,
-                                title: 'Password ',
+                                title: AppStrings.translate(context,'password'),
                                 showRequiredSign: true,
                                 textController: passwordController,
                                 isPassword: true,
                                 validator: (value) {
                                   if (value == null || value.trim().isEmpty) {
-                                    return 'Please enter password';
-                                  }
+                                    return AppStrings.translate(
+                                        context,
+                                        'enter_password'
+                                    );                                  }
 
                                   if (value.length < 8) {
-                                    return 'Password must be at least 8 characters';
-                                  }
+                                    return AppStrings.translate(
+                                        context,
+                                        'password_8'
+                                    );                                  }
 
                                   return null;
                                 },
@@ -289,28 +306,40 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                 textInputAction: TextInputAction.next,
                                 length: 20,
                                 lines: 1,
-                                title: 'Confirm Password',
+                                title: AppStrings.translate(
+                                    context,
+                                    'confirm_password'
+                                ),
                                 showRequiredSign: true,
                                 textController: confirmPasswordController,
                                 isPassword: true,
                                 validator: (value) {
                                   if (value == null || value.trim().isEmpty) {
-                                    return 'Please confirm password';
-                                  }
+                                    return AppStrings.translate(
+                                        context,
+                                        'confirm_password_enter'
+                                    );                                  }
 
                                   if (value.length < 8) {
-                                    return 'Password must be at least 8 characters';
-                                  }
+                                    return AppStrings.translate(
+                                        context,
+                                        'password_8'
+                                    );                                  }
 
                                   if (value != passwordController.text) {
-                                    return 'Passwords do not match';
-                                  }
+                                    return AppStrings.translate(
+                                        context,
+                                        'password_not_match'
+                                    );                                  }
 
                                   return null;
                                 },
                               ),
                               CustomTextField(
-                                title: 'Email Id',
+                                title: AppStrings.translate(
+                                    context,
+                                    'email'
+                                ),
                                 showRequiredSign: true,
                                 textInputType: TextInputType.emailAddress,
                                 textInputAction: TextInputAction.done,
@@ -356,23 +385,33 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                 },
                                 validator: (value) {
                                   if (value == null || value.trim().isEmpty) {
-                                    return 'Please enter email';
-                                  }
+                                    return AppStrings.translate(
+                                        context,
+                                        'enter_email'
+                                    );                                  }
 
                                   if (!validEmail(value.trim())) {
-                                    return 'Enter valid email';
-                                  }
+                                    return AppStrings.translate(
+                                        context,
+                                        'invalid_email'
+                                    );                                  }
 
                                   if (isEmailAvailable == false) {
                                     return emailMessage ??
-                                        'Email already registered';
-                                  }
+                                    emailMessage ??
+                                  AppStrings.translate(
+                                  context,
+                                  'email_registered'
+                                  );                                  }
 
                                   return null;
                                 },
                               ),
                               CustomTextField(
-                                title: 'Gender',
+                                title: AppStrings.translate(
+                                    context,
+                                    'gender'
+                                ),
                                 showRequiredSign: true,
                                 textInputAction: TextInputAction.done,
                                 textController: genderController,
@@ -380,14 +419,22 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                 onTap: () async {
                                   var selected = await pickGender(context);
                                   if (selected != null) {
-                                    genderController.text = selected;
+                                    selectedGender = selected; // Male
+
+                                    genderController.text =
+                                        AppStrings.translate(
+                                          context,
+                                          selected.toLowerCase(),
+                                        ); // पुरुष
                                   }
-                                },
+                                  },
                                 suffix: Icon(Icons.arrow_drop_down, size: 24),
                                 validator: (value) {
                                   if (value!.trim().isEmpty) {
-                                    return 'select gender';
-                                  }
+                                    return AppStrings.translate(
+                                        context,
+                                        'select_gender'
+                                    );                                  }
 
                                   return null;
                                 },
@@ -421,9 +468,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                         "tenant": "nmc",
                                         "username": userNameController.text
                                             .trim(),
-                                        "gender": genderController.text
-                                            .trim()
-                                            .toUpperCase(),
+                                        "gender": selectedGender!.toUpperCase(),
                                         "dateOfBirth": _formatDobForApi(
                                           dobController.text.trim(),
                                         ),
@@ -471,8 +516,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                       }
                                     }
                                   },
-                                  child: const Text(
-                                    'Register',
+                                  child:   Text(
+                                    AppStrings.translate(
+                                        context,
+                                        'register'
+                                    ),
                                     style: TextStyle(
                                       fontSize: 16,
                                       color: Colors.white,
@@ -484,9 +532,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  const Text(
-                                    "Already have an account? ",
-                                    style: TextStyle(
+                                    Text(
+                                      AppStrings.translate(
+                                          context,
+                                          'already_account'
+                                      ),
+                                      style: TextStyle(
                                       fontSize: 16,
                                       color: Colors.black,
                                     ),
@@ -501,8 +552,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                         ),
                                       );
                                     },
-                                    child: const Text(
-                                      "Log In",
+                                    child:   Text(
+                                      AppStrings.translate(
+                                          context,
+                                          'log_in'
+                                      ),
                                       style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold,
@@ -513,8 +567,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                 ],
                               ),
                               12.height(),
-                              const Text(
-                                'Version v1.1',
+                                Text(
+                                  AppStrings.translate(
+                                      context,
+                                      'version'
+                                  ),
                                 style: TextStyle(
                                   fontSize: 12,
                                   color: Colors.grey,
@@ -533,8 +590,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   width: double.infinity,
                   color: const Color(0xFF7A1236),
                   padding: const EdgeInsets.all(12),
-                  child: const Text(
-                    '© 2026 Copyright | Nashik Municipal Corporation | Government of Maharashtra | All rights Reserved',
+                  child:   Text(
+                    AppStrings.translate(
+                        context,
+                        'copyright'
+                    ),
                     textAlign: TextAlign.center,
                     style: TextStyle(color: Colors.white, fontSize: 11),
                   ),

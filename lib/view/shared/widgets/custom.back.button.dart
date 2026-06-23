@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nmc_wrapper/utils/app_strings.dart';
 import 'package:nmc_wrapper/utils/extensions.dart';
 
 Widget customBackButton(
@@ -18,7 +19,10 @@ Widget customBackButton(
       ),
       Visibility(
         visible: showText,
-        child: Text("Back", style: context.bodyMedium()),
+        child: Text(
+          AppStrings.translate(context, 'back'),
+          style: context.bodyMedium(),
+        ),
       ),
     ],
   );

@@ -156,7 +156,7 @@ if(Platform.isAndroid){
 
 
 
-            if (!isHandled && request.url.contains(webUrlRequest)) {
+            if (!isHandled && request.url==webUrlRequest) {
 
               isHandled = true;
 
