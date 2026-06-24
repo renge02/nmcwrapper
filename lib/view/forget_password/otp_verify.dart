@@ -39,7 +39,7 @@ class _OtpVerificationScreenState
     _timer?.cancel();
 
     setState(() {
-      _secondsRemaining = 90;
+      _secondsRemaining = 120;
     });
 
     _timer = Timer.periodic(
@@ -64,20 +64,27 @@ class _OtpVerificationScreenState
         "${seconds.toString().padLeft(2, '0')}";
   }
 
-  void resendOtp() {
+  Future<void> resendOtp() async {
     // Call Resend OTP API here
 
     startTimer();
-
-    ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-        content: Text(
-          AppStrings.translate(
-            context,
-            'otp_sent_success',
-          ),
-        ),      ),
+    final success = await context
+        .read<RegisterProvider>()
+        .sendOtp(
+      widget.mobile.trim(),
     );
+    if(success){
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            AppStrings.translate(
+              context,
+              'otp_sent_success',
+            ),
+          ),      ),
+      );
+    }
   }
 
   @override

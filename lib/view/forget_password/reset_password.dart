@@ -258,6 +258,16 @@ class _ResetPasswordScreenState
                                       builder: (_) => const LoginScreen(),
                                     ),
                                   );
+                                }else{
+                                  ScaffoldMessenger.of(
+                                    context,
+                                  ).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        "OTP validation unsuccessful",
+                                      ),
+                                    ),
+                                  );
                                 }
                               },
                               style:

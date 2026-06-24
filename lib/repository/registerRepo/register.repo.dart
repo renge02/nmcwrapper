@@ -1,5 +1,7 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
  import 'package:nmc_wrapper/repository/registerRepo/register.service.dart';
+import 'package:nmc_wrapper/utils/logger.dart';
 
 class RegisterProvider extends ChangeNotifier {
   final RegisterService _service = RegisterService();
@@ -22,7 +24,8 @@ class RegisterProvider extends ChangeNotifier {
       data = response.data;
 
       return response.data["isSuccessful"] == true;
-    } catch (e) {
+    }
+    catch (e) {
       error = e.toString();
       return false;
     } finally {
@@ -36,7 +39,8 @@ class RegisterProvider extends ChangeNotifier {
     required String newPassword,
     required String confirmPassword,
     required String otpReference,
-  }) async {
+  }) async
+  {
     try {
       isLoading = true;
       error = null;
@@ -52,6 +56,19 @@ class RegisterProvider extends ChangeNotifier {
       data = response.data;
 
       return response.statusCode == 200;
+    } on DioException catch (e) {
+
+      logger("Status Code : ${e.response?.statusCode}");
+      logger("Error Response confirmForgetPassword: ${e.response?.data}");
+
+      if (e.response != null) {
+        error =
+            e.response?.data['error']['message'] ??
+            'Something went wrong';
+      } else {
+        error = e.message;
+      }
+      return false;
     } catch (e) {
       error = e.toString();
       return false;

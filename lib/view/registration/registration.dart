@@ -80,7 +80,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         ),
                         child: Form(
                           key: _formKey,
-                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          autovalidateMode: AutovalidateMode.disabled,
                           child: Column(
                             spacing: 8,
                             crossAxisAlignment: CrossAxisAlignment.center,
@@ -127,11 +127,20 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                 readOnly: true,
                                 onTap: () async {
                                   final locale = context.read<LanguageProvider>().locale;
+                                  final today = DateTime.now();
+
+                                  final eighteenYearsAgo = DateTime(
+                                    today.year - 18,
+                                    today.month,
+                                    today.day,
+                                  );
 
                                   var dob = await pickDate(
                                     locale: locale,
                                     context: context,
-                                    initialDate: DateTime.now(),
+                                    initialDate: eighteenYearsAgo,
+                                    firstDate: DateTime(1900),
+                                    lastDate: eighteenYearsAgo
                                   );
                                   if (dob != null) {
                                     dobController.text =
@@ -172,7 +181,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                             'AVAILABLE';
                                       });
 
-                                      _formKey.currentState?.validate();
+                                      // _formKey.currentState?.validate();
                                     }
                                   }
                                 },
@@ -298,6 +307,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                   if (value!.isEmpty || validEmail(value)) {
                                     setState(() {
                                       emailMessage = null;
+                                      isEmailAvailable = false;
                                     });
                                     return;
                                   }
@@ -452,10 +462,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                         ).showSnackBar(
                                           SnackBar(
                                             content: Text(
-                                              context
-                                                      .read<RegisterProvider>()
-                                                      .error ??
-                                                  "Failed to send OTP",
+                                                AppStrings.translate(
+                                                  context,
+                                                  'registration_failed',
+                                                )
                                             ),
                                           ),
                                         );

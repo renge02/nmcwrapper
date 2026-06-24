@@ -6,11 +6,9 @@ import 'package:nmc_wrapper/utils/app_strings.dart';
 import 'package:nmc_wrapper/utils/extensions.dart';
 import 'package:nmc_wrapper/utils/secure.storage.dart';
 import 'package:nmc_wrapper/view/important_contacts/helpline_screen.dart';
-import 'package:nmc_wrapper/view/profile/profile_screen.dart';
 import 'package:nmc_wrapper/view/shared/app.theme.dart';
 import 'package:nmc_wrapper/view/shared/widgets/custom_alert.dart';
 import 'package:nmc_wrapper/view/webview/webview.dart';
-import 'package:nmc_wrapper/view/webview/webview_Page.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -200,13 +198,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
             const SizedBox(height: 10),
 
-            buildDrawerItem(
+         /*   buildDrawerItem(
               Icons.person_outline,
               AppStrings.translate(context, 'profile'),
               () {
                 // context.pushWidget(ProfileScreen());
               },
-            ),
+            ),*/
 
             emergencyDrawerItem(),
 
