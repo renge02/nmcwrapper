@@ -89,7 +89,7 @@ class AppStrings {
       'connect_now':'Connect Now',
 
       'profile':'Profile',
-
+      'edit_profile': 'Edit Profile',
       'emergency_use_only':'EMERGENCY USE ONLY',
 
       'police':'Police',
@@ -118,20 +118,25 @@ class AppStrings {
       'elected_members':'Elected\nMembers',
       'administration':'Administration',
       'important_contacts':'Important Contacts',
-
       'help_center_timing':
       'NMC help center(Available from 7AM to 11PM)',
-      "divisionalOffices": "Divisional Offices",
-      "amardham": "Amardham",
       "fireBrigade": "Fire Brigade",
       "waterSupply": "Water Supply",
-      "maternityHome": "Maternity Home",
+      "theatres": "Theatres",
       "policeStation": "Police Station",
-      "hospital": "Hospital",
-      "bloodBank": "Blood Bank",
-      "pathologyLab": "Pathology Lab",
-      "medicalCollege": "Medical College"
-     },
+      "hospital": "Hospitals",
+      "bloodBank": "Blood Banks",
+      'emergency_contacts': 'Emergency Contacts',
+      'search': 'Search',
+
+      'save':'Save',
+      'name':'Name',
+      'city':'City',
+      'mobile_no':'Mobile No.',
+      'enter_city':'Enter Your City Name',
+
+
+    },
 
     'mr': {
       'login': 'नागरिक लॉगिन',
@@ -208,7 +213,7 @@ class AppStrings {
       'connect_now':'आमच्याशी जोडा',
 
       'profile':'प्रोफाइल',
-
+      'edit_profile': 'प्रोफाइल संपादित करा',
       'emergency_use_only':'फक्त आपत्कालीन वापरासाठी',
 
       'police':'पोलीस',
@@ -240,17 +245,21 @@ class AppStrings {
 
       'help_center_timing':
       'एनएमसी मदत केंद्र (सकाळी ७ ते रात्री ११)',
-      "divisionalOffices": "विभागीय कार्यालये",
-      "amardham": "अमरधाम",
+
       "fireBrigade": "अग्निशमन दल",
       "waterSupply": "पाणीपुरवठा",
-      "maternityHome": "प्रसूतीगृह",
-      "policeStation": "पोलीस स्टेशन",
-      "hospital": "रुग्णालय",
-      "bloodBank": "रक्तपेढी",
-      "pathologyLab": "पॅथॉलॉजी लॅब",
-      "medicalCollege": "वैद्यकीय महाविद्यालय"
+      "theatres": "नाट्यगृहे",
+      "policeStation": "पोलीस ठाणे",
+      "hospital": "रुग्णालये",
+      "bloodBank": "रक्तपेढ्या",
+      'emergency_contacts': 'आपत्कालीन संपर्क',
+      'search': 'शोधा',
 
+      'save': 'जतन करा',
+      'name':'नाव',
+       'city':'शहर',
+      'mobile_no':'मोबाईल क्रमांक',
+      'enter_city':'तुमच्या शहराचे नाव प्रविष्ट करा',
     },
   };
 

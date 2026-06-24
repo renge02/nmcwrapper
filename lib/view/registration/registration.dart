@@ -47,63 +47,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   final TextEditingController dobController = TextEditingController();
 
-  Future<void> selectDate(BuildContext context) async {
-    DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: DateTime(2000),
-      firstDate: DateTime(1950),
-      lastDate: DateTime.now(),
-    );
 
-    if (pickedDate != null) {
-      setState(() {
-        dobController.text =
-            "${pickedDate.day.toString().padLeft(2, '0')}-"
-            "${pickedDate.month.toString().padLeft(2, '0')}-"
-            "${pickedDate.year}";
-      });
-    }
-  }
 
-  InputDecoration customDecoration({
-    required String hintText,
-    Widget? suffixIcon,
-  }) {
-    return InputDecoration(
-      hintText: hintText,
-      hintStyle: const TextStyle(color: Colors.grey, fontSize: 14),
-      suffixIcon: suffixIcon,
-      filled: true,
-      fillColor: Colors.white,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(6),
-        borderSide: BorderSide(color: Colors.grey.shade300),
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(6),
-        borderSide: BorderSide(color: Colors.grey.shade300),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(6),
-        borderSide: const BorderSide(color: Colors.blue),
-      ),
-    );
-  }
-
-  Widget buildLabel(String title) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: Text(
-        title,
-        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
-      ),
-    );
-  }
-
-  Widget spacing() {
-    return const SizedBox(height: 16);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -231,7 +176,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                     }
                                   }
                                 },
-                                child: CustomTextField(
+                                child:
+                                CustomTextField(
                                   title: AppStrings.translate(context,'mobile'),
                                   showRequiredSign: true,
                                   textInputType: TextInputType.phone,

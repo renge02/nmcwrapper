@@ -115,7 +115,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                 ),
               )
             : const SizedBox.shrink(),
-        4.height(),
+
         TextFormField(
           key: widget.formFieldKey,
           focusNode: widget.focusNode,

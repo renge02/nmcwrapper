@@ -11,16 +11,6 @@ class HelplineScreen extends StatelessWidget {
 
   List<HelplineModel> helplineList = [
     HelplineModel(
-      titleKey: "divisionalOffices",
-      icon: Icons.phone_in_talk,
-      color: Colors.blue,
-    ),
-    HelplineModel(
-      titleKey: "amardham",
-      icon: Icons.phone_in_talk,
-      color: Colors.indigo,
-    ),
-    HelplineModel(
       titleKey: "fireBrigade",
       icon: Icons.phone_in_talk,
       color: Colors.deepPurple,
@@ -31,7 +21,7 @@ class HelplineScreen extends StatelessWidget {
       color: Colors.pink,
     ),
     HelplineModel(
-      titleKey: "maternityHome",
+      titleKey: "ambulance",
       icon: Icons.phone_in_talk,
       color: Colors.pinkAccent,
     ),
@@ -51,21 +41,16 @@ class HelplineScreen extends StatelessWidget {
       color: Colors.amber,
     ),
     HelplineModel(
-      titleKey: "pathologyLab",
+      titleKey: "theatres",
       icon: Icons.phone_in_talk,
       color: Colors.lightBlue,
-    ),
-    HelplineModel(
-      titleKey: "medicalCollege",
-      icon: Icons.phone_in_talk,
-      color: Colors.indigo,
     ),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xffECEFF3),
+      backgroundColor: const Color(0xFFF2E9E8),
 
       appBar: AppBar(
         leading: IconButton(
@@ -73,14 +58,15 @@ class HelplineScreen extends StatelessWidget {
 
           onPressed: () {
             context.pop();
-           },
+          },
         ),
         elevation: 0,
         titleSpacing: 0,
         backgroundColor: AppTheme.appBarColor,
-        title: Text(AppStrings.translate(context, "important_contacts"),
-            style: GoogleFonts.notoSans(fontSize: 14, color: Colors.white),
-      ),
+        title: Text(
+          AppStrings.translate(context, "important_contacts"),
+          style: GoogleFonts.notoSans(fontSize: 14, color: Colors.white),
+        ),
       ),
 
       body: Padding(
@@ -101,7 +87,14 @@ class HelplineScreen extends StatelessWidget {
               item: helplineList[index],
               onTap: () {
                 print(helplineList[index].titleKey);
-                context.pushWidget(EmergencyContactScreen());
+                context.pushWidget(
+                  EmergencyContactScreen(
+                    categoryName: AppStrings.translate(
+                      context,
+                      helplineList[index].titleKey,
+                    ),
+                  ),
+                );
               },
             );
           },
@@ -111,7 +104,7 @@ class HelplineScreen extends StatelessWidget {
   }
 }
 
- class HelplineItem extends StatelessWidget {
+class HelplineItem extends StatelessWidget {
   final HelplineModel item;
   final VoidCallback onTap;
 
@@ -150,8 +143,8 @@ class HelplineScreen extends StatelessWidget {
 
   Widget _buildIcon() {
     return Container(
-      height: 58,
-      width: 58,
+      height: 48,
+      width: 48,
 
       decoration: BoxDecoration(
         color: item.color,
@@ -166,7 +159,7 @@ class HelplineScreen extends StatelessWidget {
         ],
       ),
 
-      child: Icon(item.icon, color: Colors.white, size: 28),
+      child: Icon(item.icon, color: Colors.white, size: 25),
     );
   }
 
@@ -180,11 +173,7 @@ class HelplineScreen extends StatelessWidget {
 
       overflow: TextOverflow.ellipsis,
 
-      style: const TextStyle(
-        fontSize: 16,
-        fontWeight: FontWeight.w600,
-        color: Color(0xff1D4370),
-      ),
+      style: GoogleFonts.notoSans(fontSize: 15, color: Color(0xff1D4370)),
     );
   }
 }
