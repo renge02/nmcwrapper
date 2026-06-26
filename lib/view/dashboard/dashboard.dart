@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:nmc_wrapper/repository/language/LanguageProvider.dart';
@@ -198,14 +200,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
             const SizedBox(height: 10),
 
-         /*   buildDrawerItem(
+            /*   buildDrawerItem(
               Icons.person_outline,
               AppStrings.translate(context, 'profile'),
               () {
                 // context.pushWidget(ProfileScreen());
               },
             ),*/
-
             emergencyDrawerItem(),
 
             const Spacer(),
@@ -344,7 +345,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ),
 
             itemBuilder: (_, index) {
-              return ServiceCard(item: items[index]);
+              return Opacity(
+                  opacity: items[index].greyLayout ? 0.4 : 1.0,
+                  child: ServiceCard(item: items[index]));
             },
           ),
         ],
@@ -398,11 +401,17 @@ class ServiceCard extends StatelessWidget {
 
 class Service {
   final String title;
-
   final String image;
+  final bool greyLayout;
   final Function(BuildContext) onTap;
 
-  Service(this.title, this.image, {required this.onTap});
+  Service(
+    this.title,
+    this.image, {
+
+    this.greyLayout = true,
+    required this.onTap,
+  });
 }
 
 List<Service> services = [
@@ -417,11 +426,13 @@ List<Service> services = [
         WebPage(webUrl: webUrl, token: token, userData: userData),
       );
     },
+    greyLayout: false
   ),
 
   Service(
     "marriage_registration",
     "assets/images/marriage_regis.png",
+greyLayout: false,
     onTap: (context) async {
       String accessToken = await getIt<SecureStorage>().getToken() ?? '';
       String userData = await getIt<SecureStorage>().getUserData() ?? '';
@@ -437,17 +448,14 @@ List<Service> services = [
           "&logoutRedirectUrl=${Uri.encodeComponent(logoutRedirectUrl)}";
 
       context.pushWidget(
-        WebPage(
-          webUrl: webUrl,
-          token: accessToken,
-          userData: userData,
-        ),
+        WebPage(webUrl: webUrl, token: accessToken, userData: userData),
       );
     },
   ),
   Service(
     "challan_payment",
     "assets/images/accounting_bal.png",
+greyLayout: false,
     onTap: (context) async {
       String token = await getIt<SecureStorage>().getToken() ?? '';
       String userData = await getIt<SecureStorage>().getUserData() ?? '';
@@ -460,12 +468,20 @@ List<Service> services = [
     },
   ),
   Service(
+    "property_tax",
+    "assets/images/property_tax.png",
+    greyLayout: false,
+    onTap: (context) {
+      openUrl("https://propertytax.nmctax.in/");
+    },
+  ),
+  Service(
     "trade_license",
     "assets/images/trade_lic.png",
     onTap: (context) {
-      ScaffoldMessenger.of(context).showSnackBar(
+     /* ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(AppStrings.translate(context, 'coming_soon'))),
-      );
+      );*/
     },
   ),
 
@@ -473,9 +489,9 @@ List<Service> services = [
     "hoarding_permission",
     "assets/images/hoarding_per.png",
     onTap: (context) {
-      ScaffoldMessenger.of(context).showSnackBar(
+      /*ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(AppStrings.translate(context, 'coming_soon'))),
-      );
+      );*/
     },
   ),
 
@@ -483,9 +499,9 @@ List<Service> services = [
     "tree_cutting_permission",
     "assets/images/tree.png",
     onTap: (context) {
-      ScaffoldMessenger.of(context).showSnackBar(
+    /*  ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(AppStrings.translate(context, 'coming_soon'))),
-      );
+      );*/
     },
   ),
 
@@ -493,9 +509,9 @@ List<Service> services = [
     "noc_issuance",
     "assets/images/noc.png",
     onTap: (context) {
-      ScaffoldMessenger.of(context).showSnackBar(
+     /* ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(AppStrings.translate(context, 'coming_soon'))),
-      );
+      );*/
     },
   ),
 
@@ -503,9 +519,9 @@ List<Service> services = [
     "water_connection",
     "assets/images/home.png",
     onTap: (context) {
-      ScaffoldMessenger.of(context).showSnackBar(
+      /*ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(AppStrings.translate(context, 'coming_soon'))),
-      );
+      );*/
     },
   ),
 
@@ -513,9 +529,9 @@ List<Service> services = [
     "birth_death",
     "assets/images/p_women.png",
     onTap: (context) {
-      ScaffoldMessenger.of(context).showSnackBar(
+     /* ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(AppStrings.translate(context, 'coming_soon'))),
-      );
+      );*/
     },
   ),
 
@@ -523,37 +539,48 @@ List<Service> services = [
     "health_facility",
     "assets/images/hospital.png",
     onTap: (context) {
-      ScaffoldMessenger.of(context).showSnackBar(
+    /*  ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(AppStrings.translate(context, 'coming_soon'))),
-      );
+      );*/
     },
   ),
 
-  Service(
-    "property_tax",
-    "assets/images/property_tax.png",
-    onTap: (context) {
-      openUrl("https://propertytax.nmctax.in/");
-    },
-  ),
+
 ];
 
 List<Service> civicServices = [
   Service(
     "civic_services",
     "assets/images/family.png",
+    greyLayout: false,
     onTap: (context) {
       openUrl('https://civicservices.nmc.gov.in/login');
     },
   ),
-
+  Service(
+    "nmc_help_center",
+    "assets/images/help.png",
+    greyLayout: false,
+    onTap: (context) {
+      callFunction(context);
+    },
+  ),
+  Service(
+    "important_contacts",
+    "assets/images/add_call.png",
+    greyLayout: false,
+    onTap: (context) {
+      // openUrl('https://nmc.gov.in/home/getfrontpage/7/191/E#tabs|History:tab1');
+      context.pushWidget(HelplineScreen());
+    },
+  ),
   Service(
     "news",
     "assets/images/news.png",
     onTap: (context) {
-      ScaffoldMessenger.of(context).showSnackBar(
+      /*ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(AppStrings.translate(context, 'coming_soon'))),
-      );
+      );*/
     },
   ),
 
@@ -561,27 +588,21 @@ List<Service> civicServices = [
     "faq",
     "assets/images/faq.png",
     onTap: (context) {
-      ScaffoldMessenger.of(context).showSnackBar(
+     /* ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(AppStrings.translate(context, 'coming_soon'))),
-      );
+      );*/
     },
   ),
 
-  Service(
-    "nmc_help_center",
-    "assets/images/help.png",
-    onTap: (context) {
-      callFunction(context);
-    },
-  ),
+
 
   Service(
     "know_our_works",
     "assets/images/work.png",
     onTap: (context) {
-      ScaffoldMessenger.of(context).showSnackBar(
+      /*ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(AppStrings.translate(context, 'coming_soon'))),
-      );
+      );*/
     },
   ),
 
@@ -589,9 +610,9 @@ List<Service> civicServices = [
     "elected_members",
     "assets/images/election.png",
     onTap: (context) {
-      ScaffoldMessenger.of(context).showSnackBar(
+     /* ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(AppStrings.translate(context, 'coming_soon'))),
-      );
+      );*/
     },
   ),
 
@@ -599,20 +620,13 @@ List<Service> civicServices = [
     "administration",
     "assets/images/admin.png",
     onTap: (context) {
-      ScaffoldMessenger.of(context).showSnackBar(
+    /*  ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(AppStrings.translate(context, 'coming_soon'))),
-      );
+      );*/
     },
   ),
 
-  Service(
-    "important_contacts",
-    "assets/images/add_call.png",
-    onTap: (context) {
-      // openUrl('https://nmc.gov.in/home/getfrontpage/7/191/E#tabs|History:tab1');
-      context.pushWidget(HelplineScreen());
-    },
-  ),
+
 ];
 
 callFunction(BuildContext context) {
@@ -641,6 +655,7 @@ List<Service> socialMediaServices = [
   Service(
     "",
     "assets/images/facebook.png",
+    greyLayout: false,
     onTap: (context) {
       openUrl('https://www.facebook.com/mynashikmc/');
     },
@@ -649,6 +664,7 @@ List<Service> socialMediaServices = [
   Service(
     "",
     "assets/images/group.png",
+    greyLayout: false,
     onTap: (context) {
       openUrl('https://x.com/my_nmc');
     },
@@ -657,6 +673,7 @@ List<Service> socialMediaServices = [
   Service(
     "",
     "assets/images/youtube.png",
+    greyLayout: false,
     onTap: (context) {
       openUrl('https://www.youtube.com/c/mynmc');
     },
@@ -664,6 +681,7 @@ List<Service> socialMediaServices = [
   Service(
     "",
     "assets/images/instagram.png",
+    greyLayout: false,
     onTap: (context) {
       openUrl('https://www.instagram.com/my_nmc');
     },

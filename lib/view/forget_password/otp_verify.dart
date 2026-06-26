@@ -68,6 +68,44 @@ class _OtpVerificationScreenState
     // Call Resend OTP API here
 
     startTimer();
+    if(widget.isComeFrom=="1"){
+      final success = await context
+          .read<RegisterProvider>()
+          .sendOtpRegistration(
+        widget.mobile.trim(),
+      );
+      if(success){
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              AppStrings.translate(
+                context,
+                'otp_sent_success',
+              ),
+            ),      ),
+        );
+      }
+    }else{
+      final success = await context
+
+          .read<RegisterProvider>()
+          .sendOtp(
+        widget.mobile.trim(),
+      );
+      if(success){
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              AppStrings.translate(
+                context,
+                'otp_sent_success',
+              ),
+            ),      ),
+        );
+      }
+    }
     final success = await context
         .read<RegisterProvider>()
         .sendOtp(
@@ -366,7 +404,8 @@ class _OtpVerificationScreenState
                                   }
 
 
-                              }else{
+                              }
+                              else{
                                 final success = await context
                                     .read<RegisterProvider>()
                                     .verifyOtp(
