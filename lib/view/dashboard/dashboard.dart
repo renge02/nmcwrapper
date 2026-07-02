@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:nmc_wrapper/data/remote/network/api.end.points.dart';
 import 'package:nmc_wrapper/repository/language/LanguageProvider.dart';
 import 'package:nmc_wrapper/repository/registerRepo/service.locator.dart';
 import 'package:nmc_wrapper/utils/app_strings.dart';
@@ -216,7 +217,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
               onTap: () {
                 openUrl(
-                  'https://dev-upyog.nmc.gov.in/upyog-ui/citizen/privacy-policy',
+                  '${ApiEndPoints.baseAPIUrl}/upyog-ui/citizen/privacy-policy',
                 );
               },
             ),
@@ -442,7 +443,7 @@ List<Service> services = [
     onTap: (context) async {
       String token = await getIt<SecureStorage>().getToken() ?? '';
       String userData = await getIt<SecureStorage>().getUserData() ?? '';
-      String webUrl = 'https://dev-upyog.nmc.gov.in/upyog-ui/citizen/pgr-home';
+      String webUrl = '${ApiEndPoints.baseAPIUrl}/upyog-ui/citizen/pgr-home';
       context.pushWidget(
         WebPage(webUrl: webUrl, token: token, userData: userData),
       );
@@ -460,17 +461,20 @@ List<Service> services = [
 
       String tenantId = "pg";
       String logoutRedirectUrl =
-          "https://dev-upyog.nmc.gov.in/upyog-ui/citizen/bap-logout";
+          "${ApiEndPoints.baseAPIUrl}/upyog-ui/citizen/bap-logout";
 
       String webUrl =
-          "https://dev-upyog.nmc.gov.in/nmc/en/investor/services/968.0/apply/1"
+          "${ApiEndPoints.baseAPIUrl}/nmc/en/investor/services/968.0/apply/1"
           "?accessToken=$accessToken"
           "&tenantId=$tenantId"
           "&logoutRedirectUrl=${Uri.encodeComponent(logoutRedirectUrl)}";
 
-      context.pushWidget(
-        WebPage(webUrl: webUrl, token: accessToken, userData: userData),
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(AppStrings.translate(context, 'coming_soon'))),
       );
+     /* context.pushWidget(
+        WebPage(webUrl: webUrl, token: accessToken, userData: userData),
+      );*/
     },
   ),
   Service(
@@ -481,11 +485,14 @@ List<Service> services = [
       String token = await getIt<SecureStorage>().getToken() ?? '';
       String userData = await getIt<SecureStorage>().getUserData() ?? '';
       final String webUrl =
-          'https://dev-upyog.nmc.gov.in/upyog-ui/citizen/mcollect-home';
+          '${ApiEndPoints.baseAPIUrl}/upyog-ui/citizen/mcollect-home';
 
       context.pushWidget(
         WebPage(webUrl: webUrl, token: token, userData: userData),
       );
+      /*ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(AppStrings.translate(context, 'coming_soon'))),
+      );*/
     },
   ),
   Service(

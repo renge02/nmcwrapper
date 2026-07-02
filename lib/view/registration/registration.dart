@@ -37,11 +37,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   final genderController = TextEditingController();
   final confirmPasswordController = TextEditingController();
 
-  Timer? _emailDebounce;
 
-  bool isEmailAvailable = true;
-  bool isMobileAvailable = true;
+   bool isMobileAvailable = true;
+   bool? isEmailAvailable; // null = not checked yet
   String? emailMessage;
+  Timer? _emailDebounce;
   String? selectedGender;
 
 
@@ -291,10 +291,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                 },
                               ),
                               CustomTextField(
-                                title: AppStrings.translate(
-                                    context,
-                                    'email'
-                                ),
+                                title: AppStrings.translate(context, 'email'),
                                 showRequiredSign: true,
                                 textInputType: TextInputType.emailAddress,
                                 textInputAction: TextInputAction.done,
@@ -304,66 +301,63 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                 onChanged: (value) {
                                   _emailDebounce?.cancel();
 
-                                  if (value!.isEmpty || validEmail(value)) {
+                                  // Clear validation when empty
+                                  if (value == null || value.trim().isEmpty) {
                                     setState(() {
+                                      isEmailAvailable = null;
                                       emailMessage = null;
-                                      isEmailAvailable = false;
+                                    });
+                                    return;
+                                  }
+
+                                  // Don't call API for invalid email
+                                  if (!validEmail(value.trim())) {
+                                    setState(() {
+                                      isEmailAvailable = null;
+                                      emailMessage = null;
                                     });
                                     return;
                                   }
 
                                   _emailDebounce = Timer(
                                     const Duration(milliseconds: 500),
-                                    () async {
+                                        () async {
                                       await context
                                           .read<RegisterProvider>()
-                                          .checkRegistrationEmail(value);
+                                          .checkRegistrationEmail(value.trim());
 
-                                      final response = context
-                                          .read<RegisterProvider>()
-                                          .data;
+                                      final response = context.read<RegisterProvider>().data;
 
-                                      if (mounted &&
-                                          response != null &&
-                                          response['email'] != null) {
+                                      if (!mounted) return;
+
+                                      if (response != null && response['email'] != null) {
                                         setState(() {
                                           isEmailAvailable =
-                                              response['email']['status'] ==
-                                              'AVAILABLE';
-
-                                          emailMessage =
-                                              response['email']['message'];
+                                              response['email']['status'] == 'AVAILABLE';
+                                          emailMessage = response['email']['message'];
                                         });
                                       }
                                     },
                                   );
-                                  return null;
                                 },
                                 validator: (value) {
                                   if (value == null || value.trim().isEmpty) {
-                                    return AppStrings.translate(
-                                        context,
-                                        'enter_email'
-                                    );                                  }
+                                    return AppStrings.translate(context, 'enter_email');
+                                  }
 
                                   if (!validEmail(value.trim())) {
-                                    return AppStrings.translate(
-                                        context,
-                                        'invalid_email'
-                                    );                                  }
+                                    return AppStrings.translate(context, 'invalid_email');
+                                  }
 
+                                  // Only validate after API response
                                   if (isEmailAvailable == false) {
                                     return emailMessage ??
-                                    emailMessage ??
-                                  AppStrings.translate(
-                                  context,
-                                  'email_registered'
-                                  );                                  }
+                                        AppStrings.translate(context, 'email_registered');
+                                  }
 
                                   return null;
                                 },
-                              ),
-                              CustomTextField(
+                              ),                              CustomTextField(
                                 title: AppStrings.translate(
                                     context,
                                     'gender'
