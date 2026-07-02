@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:nmc_wrapper/repository/language/LanguageProvider.dart';
@@ -208,10 +206,24 @@ class _DashboardScreenState extends State<DashboardScreen> {
               },
             ),*/
             emergencyDrawerItem(),
+            ListTile(
+              title: Text(
+                AppStrings.translate(context, 'privacy_policy'),
+                style: GoogleFonts.notoSans(
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              onTap: () {
+                openUrl(
+                  'https://dev-upyog.nmc.gov.in/upyog-ui/citizen/privacy-policy',
+                );
+              },
+            ),
 
             const Spacer(),
 
-            const Divider(),
+            const Divider(color: AppTheme.appBarColor),
 
             buildDrawerItem(
               Icons.logout,
@@ -242,11 +254,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       leading: Icon(icon, color: iconColor),
       title: Text(
         title,
-        style: GoogleFonts.notoSans(
-          color: textColor,
-          fontSize: 15,
-          fontWeight: FontWeight.w500,
-        ),
+        style: GoogleFonts.notoSans(fontSize: 15, fontWeight: FontWeight.w600),
       ),
       onTap: onTap,
     );
@@ -346,8 +354,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
             itemBuilder: (_, index) {
               return Opacity(
-                  opacity: items[index].greyLayout ? 0.4 : 1.0,
-                  child: ServiceCard(item: items[index]));
+                opacity: items[index].greyLayout ? 1.0 : 1.0,
+                child: ServiceCard(item: items[index]),
+              );
             },
           ),
         ],
@@ -369,8 +378,20 @@ class ServiceCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.shade300,
+              offset: const Offset(-3, -3),
+              blurRadius: 6,
+            ),
+            BoxShadow(
+              color: Colors.black.withOpacity(0.18),
+              offset: const Offset(5, 8),
+              blurRadius: 15,
+              spreadRadius: 2,
+            ),
+          ],
         ),
-
         child: Padding(
           padding: const EdgeInsets.all(5),
 
@@ -385,7 +406,7 @@ class ServiceCard extends StatelessWidget {
                       AppStrings.translate(context, item.title),
                       textAlign: TextAlign.center,
                       maxLines: 5,
-                      style: GoogleFonts.notoSans(fontSize: 10),
+                      style: GoogleFonts.notoSans(fontSize: 9),
                     ),
                   ],
                 )
@@ -426,13 +447,13 @@ List<Service> services = [
         WebPage(webUrl: webUrl, token: token, userData: userData),
       );
     },
-    greyLayout: false
+    greyLayout: false,
   ),
 
   Service(
     "marriage_registration",
     "assets/images/marriage_regis.png",
-greyLayout: false,
+    greyLayout: false,
     onTap: (context) async {
       String accessToken = await getIt<SecureStorage>().getToken() ?? '';
       String userData = await getIt<SecureStorage>().getUserData() ?? '';
@@ -455,7 +476,7 @@ greyLayout: false,
   Service(
     "challan_payment",
     "assets/images/accounting_bal.png",
-greyLayout: false,
+    greyLayout: false,
     onTap: (context) async {
       String token = await getIt<SecureStorage>().getToken() ?? '';
       String userData = await getIt<SecureStorage>().getUserData() ?? '';
@@ -479,9 +500,9 @@ greyLayout: false,
     "trade_license",
     "assets/images/trade_lic.png",
     onTap: (context) {
-     /* ScaffoldMessenger.of(context).showSnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(AppStrings.translate(context, 'coming_soon'))),
-      );*/
+      );
     },
   ),
 
@@ -489,9 +510,9 @@ greyLayout: false,
     "hoarding_permission",
     "assets/images/hoarding_per.png",
     onTap: (context) {
-      /*ScaffoldMessenger.of(context).showSnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(AppStrings.translate(context, 'coming_soon'))),
-      );*/
+      );
     },
   ),
 
@@ -499,9 +520,9 @@ greyLayout: false,
     "tree_cutting_permission",
     "assets/images/tree.png",
     onTap: (context) {
-    /*  ScaffoldMessenger.of(context).showSnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(AppStrings.translate(context, 'coming_soon'))),
-      );*/
+      );
     },
   ),
 
@@ -509,9 +530,9 @@ greyLayout: false,
     "noc_issuance",
     "assets/images/noc.png",
     onTap: (context) {
-     /* ScaffoldMessenger.of(context).showSnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(AppStrings.translate(context, 'coming_soon'))),
-      );*/
+      );
     },
   ),
 
@@ -519,9 +540,9 @@ greyLayout: false,
     "water_connection",
     "assets/images/home.png",
     onTap: (context) {
-      /*ScaffoldMessenger.of(context).showSnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(AppStrings.translate(context, 'coming_soon'))),
-      );*/
+      );
     },
   ),
 
@@ -529,9 +550,9 @@ greyLayout: false,
     "birth_death",
     "assets/images/p_women.png",
     onTap: (context) {
-     /* ScaffoldMessenger.of(context).showSnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(AppStrings.translate(context, 'coming_soon'))),
-      );*/
+      );
     },
   ),
 
@@ -539,13 +560,11 @@ greyLayout: false,
     "health_facility",
     "assets/images/hospital.png",
     onTap: (context) {
-    /*  ScaffoldMessenger.of(context).showSnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(AppStrings.translate(context, 'coming_soon'))),
-      );*/
+      );
     },
   ),
-
-
 ];
 
 List<Service> civicServices = [
@@ -578,9 +597,9 @@ List<Service> civicServices = [
     "news",
     "assets/images/news.png",
     onTap: (context) {
-      /*ScaffoldMessenger.of(context).showSnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(AppStrings.translate(context, 'coming_soon'))),
-      );*/
+      );
     },
   ),
 
@@ -588,21 +607,19 @@ List<Service> civicServices = [
     "faq",
     "assets/images/faq.png",
     onTap: (context) {
-     /* ScaffoldMessenger.of(context).showSnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(AppStrings.translate(context, 'coming_soon'))),
-      );*/
+      );
     },
   ),
-
-
 
   Service(
     "know_our_works",
     "assets/images/work.png",
     onTap: (context) {
-      /*ScaffoldMessenger.of(context).showSnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(AppStrings.translate(context, 'coming_soon'))),
-      );*/
+      );
     },
   ),
 
@@ -610,9 +627,9 @@ List<Service> civicServices = [
     "elected_members",
     "assets/images/election.png",
     onTap: (context) {
-     /* ScaffoldMessenger.of(context).showSnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(AppStrings.translate(context, 'coming_soon'))),
-      );*/
+      );
     },
   ),
 
@@ -620,13 +637,11 @@ List<Service> civicServices = [
     "administration",
     "assets/images/admin.png",
     onTap: (context) {
-    /*  ScaffoldMessenger.of(context).showSnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(AppStrings.translate(context, 'coming_soon'))),
-      );*/
+      );
     },
   ),
-
-
 ];
 
 callFunction(BuildContext context) {

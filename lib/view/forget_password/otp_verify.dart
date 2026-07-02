@@ -86,7 +86,8 @@ class _OtpVerificationScreenState
             ),      ),
         );
       }
-    }else{
+    }
+    else{
       final success = await context
 
           .read<RegisterProvider>()
@@ -106,23 +107,7 @@ class _OtpVerificationScreenState
         );
       }
     }
-    final success = await context
-        .read<RegisterProvider>()
-        .sendOtp(
-      widget.mobile.trim(),
-    );
-    if(success){
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            AppStrings.translate(
-              context,
-              'otp_sent_success',
-            ),
-          ),      ),
-      );
-    }
   }
 
   @override

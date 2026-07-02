@@ -10,7 +10,7 @@ class AppStrings {
       'password': 'Password',
       'continue': 'Continue',
       'enter_username': 'Please enter username',
-      'enter_password': 'Enter 6 digit password',
+      'enter_password': 'Enter 8 digit password',
       'forgot_password': 'Forgot Password?',
       'dont_have_account': 'Don’t have an account? ',
       'register_here': 'Register here',
@@ -134,6 +134,7 @@ class AppStrings {
       'city':'City',
       'mobile_no':'Mobile No.',
       'enter_city':'Enter Your City Name',
+      'privacy_policy':'Privacy Policy',
 
 
     },
@@ -260,6 +261,8 @@ class AppStrings {
        'city':'शहर',
       'mobile_no':'मोबाईल क्रमांक',
       'enter_city':'तुमच्या शहराचे नाव प्रविष्ट करा',
+      'privacy_policy': 'गोपनीयता धोरण',
+
     },
   };
 

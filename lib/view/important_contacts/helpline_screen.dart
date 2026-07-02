@@ -112,11 +112,24 @@ class HelplineItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 3,
-      shadowColor: Colors.black12,
-
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.shade300,
+            offset: const Offset(-3, -3),
+            blurRadius: 6,
+          ),
+          BoxShadow(
+            color: Colors.black.withOpacity(0.18),
+            offset: const Offset(5, 8),
+            blurRadius: 15,
+            spreadRadius: 2,
+          ),
+        ],
+      ),
 
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
