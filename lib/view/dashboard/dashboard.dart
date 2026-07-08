@@ -116,6 +116,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
         child: SingleChildScrollView(
           child: Column(
             children: [
+              Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: SizedBox(
+                  width: double.infinity,
+                  // height: 100,
+                  child: Image.asset(
+                    'assets/images/banner.png',
+                    fit: BoxFit.fitWidth,
+                  ),
+                ),
+              ),
               buildSection(
                 title: AppStrings.translate(context, 'all_services'),
                 items: services,
@@ -377,6 +388,9 @@ class ServiceCard extends StatelessWidget {
       onTap: () => item.onTap(context),
       child: Container(
         decoration: BoxDecoration(
+          border: !item.greyLayout
+              ? Border.all(color: Colors.green, width: 2)
+              : Border.all(color: AppTheme.textGrey),
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
@@ -399,7 +413,6 @@ class ServiceCard extends StatelessWidget {
           child: item.title.isNotEmpty
               ? Column(
                   mainAxisAlignment: MainAxisAlignment.center,
-
                   children: [
                     Image.asset(item.image, width: 18, height: 18),
                     const SizedBox(height: 5),
@@ -430,7 +443,6 @@ class Service {
   Service(
     this.title,
     this.image, {
-
     this.greyLayout = true,
     required this.onTap,
   });
@@ -450,11 +462,18 @@ List<Service> services = [
     },
     greyLayout: false,
   ),
-
+  Service(
+    "property_tax",
+    "assets/images/property_tax.png",
+    greyLayout: false,
+    onTap: (context) {
+      openUrl("https://propertytax.nmctax.in/");
+    },
+  ),
   Service(
     "marriage_registration",
     "assets/images/marriage_regis.png",
-    greyLayout: false,
+    greyLayout: true,
     onTap: (context) async {
       String accessToken = await getIt<SecureStorage>().getToken() ?? '';
       String userData = await getIt<SecureStorage>().getUserData() ?? '';
@@ -472,37 +491,31 @@ List<Service> services = [
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(AppStrings.translate(context, 'coming_soon'))),
       );
-     /* context.pushWidget(
+      /* context.pushWidget(
         WebPage(webUrl: webUrl, token: accessToken, userData: userData),
       );*/
     },
   ),
+
   Service(
     "challan_payment",
     "assets/images/accounting_bal.png",
-    greyLayout: false,
+    greyLayout: true,
     onTap: (context) async {
       String token = await getIt<SecureStorage>().getToken() ?? '';
       String userData = await getIt<SecureStorage>().getUserData() ?? '';
       final String webUrl =
           '${ApiEndPoints.baseAPIUrl}/upyog-ui/citizen/mcollect-home';
 
-      context.pushWidget(
+     /* context.pushWidget(
         WebPage(webUrl: webUrl, token: token, userData: userData),
-      );
-      /*ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppStrings.translate(context, 'coming_soon'))),
       );*/
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(AppStrings.translate(context, 'coming_soon'))),
+      );
     },
   ),
-  Service(
-    "property_tax",
-    "assets/images/property_tax.png",
-    greyLayout: false,
-    onTap: (context) {
-      openUrl("https://propertytax.nmctax.in/");
-    },
-  ),
+
   Service(
     "trade_license",
     "assets/images/trade_lic.png",
