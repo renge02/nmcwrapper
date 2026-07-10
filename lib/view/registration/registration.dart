@@ -232,7 +232,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                 },
                               ),
                               CustomTextField(
-                                textInputType: TextInputType.text,
+                                textInputType: TextInputType.visiblePassword,
                                 textInputAction: TextInputAction.next,
                                 length: 20,
                                 lines: 1,
@@ -257,7 +257,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                 },
                               ),
                               CustomTextField(
-                                textInputType: TextInputType.text,
+                                textInputType: TextInputType.visiblePassword,
                                 textInputAction: TextInputAction.next,
                                 length: 20,
                                 lines: 1,
@@ -357,7 +357,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
                                   return null;
                                 },
-                              ),                              CustomTextField(
+                              ),
+                              CustomTextField(
                                 title: AppStrings.translate(
                                     context,
                                     'gender'
@@ -447,6 +448,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                                   mobile: mobileController.text
                                                       .trim(),
                                                   isComeFrom: "1",
+                                                  userType: "CITIZEN",
                                                 ),
                                           ),
                                         );

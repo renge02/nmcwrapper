@@ -34,7 +34,8 @@ class _EmergencyContactScreenState extends State<EmergencyContactScreen> {
     if (widget.categoryName != null) {
       print("categoryname... ${widget.categoryName}");
       filtered = allContacts
-          .where((e) => e.name == widget.categoryName)
+          .where((e) => e.name == widget.categoryName||
+          e.nameMr == widget.categoryName)
           .toList();
     } else {
       filtered = allContacts;
@@ -60,7 +61,8 @@ class _EmergencyContactScreenState extends State<EmergencyContactScreen> {
 
     if (query.isEmpty) {
       filtered = allContacts
-          .where((e) => e.name == widget.categoryName)
+          .where((e) => e.name == widget.categoryName||
+          e.nameMr == widget.categoryName)
           .toList();
     } else {
       ContactCategory? matchedCategory;
@@ -68,17 +70,18 @@ class _EmergencyContactScreenState extends State<EmergencyContactScreen> {
       for (final category in filtered) {
 
         final categoryMatch =
-        (category.name ?? '').toLowerCase().contains(query);
+            (category.name ?? '').toLowerCase().contains(query) ||
+                (category.nameMr ?? '').contains(query);
 
         final matchedContacts = category.contacts?.where((contact) {
           final nameMatch =
-          (contact.name ?? '').toLowerCase().contains(query);
+              (contact.name ?? '').toLowerCase().contains(query) ||
+                  (contact.nameMr ?? '').contains(query);
 
-          final phoneMatch =
-              contact.phoneNumbers?.any(
-                    (phone) => phone.contains(query),
-              ) ??
-                  false;
+          final phoneMatch = contact.phoneNumbers?.any(
+                (phone) => phone.contains(query),
+          ) ??
+              false;
 
           return nameMatch || phoneMatch;
         }).toList();
@@ -86,6 +89,7 @@ class _EmergencyContactScreenState extends State<EmergencyContactScreen> {
         if (categoryMatch || (matchedContacts?.isNotEmpty ?? false)) {
           matchedCategory = ContactCategory(
             name: category.name,
+            nameMr: category.nameMr,
             contacts: categoryMatch
                 ? category.contacts
                 : matchedContacts,

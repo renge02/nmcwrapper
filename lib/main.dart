@@ -92,25 +92,59 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderStateMixin {
+
+  late Animation<Offset> _slideAnimation;
+  late AnimationController _controller;
+   late Animation<double> _fadeAnimation;
+  late Animation<double> _scaleAnimation;
   @override
   void initState() {
     super.initState();
+
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 1800),
+      vsync: this,
+    );
+
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: const Interval(0.0, 0.6, curve: Curves.easeIn),
+      ),
+    );
+
+    _scaleAnimation = Tween<double>(
+      begin: 0.7,
+      end: 1.0,
+    ).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: const Interval(0.2, 1.0, curve: Curves.easeOutBack),
+      ),
+    );
+
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.25),
+      end: Offset.zero,
+    ).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: const Interval(0.0, 1.0, curve: Curves.easeOut),
+      ),
+    );
+
+    _controller.forward();
     moveNext(2);
   }
 
-  moveNextOLD(int time) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Timer(Duration(seconds: time), () async {
-        await getIt<SecureStorage>().getUserData().then((value) {
-          if (value != null) {
-            context.pushReplacementWidget(const DashboardScreen());
-          } else {
-            context.pushReplacementWidget(const LoginScreen());
-          }
-        });
-      });
-    });
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   void moveNext(int time) {
@@ -154,18 +188,28 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        alignment: AlignmentGeometry.bottomCenter,
-        children: [
-          SizedBox(
-            width: double.infinity,
-            height: double.infinity,
-            child: Image.asset(
-              'assets/images/app_logo.png',
-              fit: BoxFit.fitHeight,
+      backgroundColor: AppTheme.appBarColor,
+      body: Center(
+        child:
+        FadeTransition(
+          opacity: _fadeAnimation,
+          child: SlideTransition(
+            position: _slideAnimation,
+            child: ScaleTransition(
+              scale: _scaleAnimation,
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: Image.asset(
+                    'assets/images/splash_logo.png',
+                    fit: BoxFit.fitHeight,
+                  ),
+                ),
+              ),
             ),
           ),
-        ],
+        ),
       ),
     );
   }

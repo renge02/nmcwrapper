@@ -16,13 +16,15 @@ class EmergencyContactsResponse {
 
 class ContactCategory {
   String? name;
+  String? nameMr;
   List<ContactModel>? contacts;
 
-  ContactCategory({this.name, this.contacts});
+  ContactCategory({this.name,this.nameMr, this.contacts});
 
   factory ContactCategory.fromJson(Map<String, dynamic> json) {
     return ContactCategory(
       name: json['name'],
+      nameMr: json['nameMr'],
 
       contacts:
           (json['contacts'] as List?)
@@ -35,13 +37,15 @@ class ContactCategory {
 
 class ContactModel {
   String? name;
+  String? nameMr;
   List<String>? phoneNumbers;
 
-  ContactModel({this.name, this.phoneNumbers});
+  ContactModel({this.name,this.nameMr, this.phoneNumbers});
 
   factory ContactModel.fromJson(Map<String, dynamic> json) {
     return ContactModel(
       name: json['name'],
+      nameMr: json['nameMr'],
 
       phoneNumbers:
           (json['phoneNumbers'] as List?)?.map((e) => e.toString()).toList() ??

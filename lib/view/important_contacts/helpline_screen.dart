@@ -12,38 +12,39 @@ class HelplineScreen extends StatelessWidget {
   List<HelplineModel> helplineList = [
     HelplineModel(
       titleKey: "fireBrigade",
+      filterKey: "Fire Brigade",
       icon: Icons.phone_in_talk,
       color: Colors.deepPurple,
     ),
     HelplineModel(
       titleKey: "waterSupply",
       icon: Icons.phone_in_talk,
-      color: Colors.pink,
+      color: Colors.pink, filterKey: 'Water Supply',
     ),
     HelplineModel(
       titleKey: "ambulance",
       icon: Icons.phone_in_talk,
-      color: Colors.pinkAccent,
+      color: Colors.pinkAccent, filterKey: 'Ambulance',
     ),
     HelplineModel(
       titleKey: "policeStation",
       icon: Icons.phone_in_talk,
-      color: Colors.deepOrange,
+      color: Colors.deepOrange, filterKey: 'Police Station',
     ),
     HelplineModel(
       titleKey: "hospital",
       icon: Icons.phone_in_talk,
-      color: Colors.orange,
+      color: Colors.orange, filterKey: 'Hospitals',
     ),
     HelplineModel(
       titleKey: "bloodBank",
       icon: Icons.phone_in_talk,
-      color: Colors.amber,
+      color: Colors.amber, filterKey: 'Blood Banks',
     ),
     HelplineModel(
       titleKey: "theatres",
       icon: Icons.phone_in_talk,
-      color: Colors.lightBlue,
+      color: Colors.lightBlue, filterKey: 'Theatres',
     ),
   ];
 
@@ -89,10 +90,7 @@ class HelplineScreen extends StatelessWidget {
                 print(helplineList[index].titleKey);
                 context.pushWidget(
                   EmergencyContactScreen(
-                    categoryName: AppStrings.translate(
-                      context,
-                      helplineList[index].titleKey,
-                    ),
+                    categoryName: helplineList[index].filterKey,
                   ),
                 );
               },

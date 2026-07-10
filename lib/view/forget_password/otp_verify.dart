@@ -12,19 +12,22 @@ import '../../../repository/registerRepo/service.locator.dart';
 
 class OtpVerificationScreen extends StatefulWidget {
   final String mobile;
+  final String userType;
   final String isComeFrom; //1 for registration 2 for forget password
 
-  const OtpVerificationScreen({super.key, required this.mobile, required this.isComeFrom});
+  const OtpVerificationScreen({
+    super.key,
+    required this.mobile,
+    required this.isComeFrom,
+    required this.userType,
+  });
 
   @override
-  State<OtpVerificationScreen> createState() =>
-      _OtpVerificationScreenState();
+  State<OtpVerificationScreen> createState() => _OtpVerificationScreenState();
 }
 
-class _OtpVerificationScreenState
-    extends State<OtpVerificationScreen> {
-  final TextEditingController otpController =
-  TextEditingController();
+class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
+  final TextEditingController otpController = TextEditingController();
 
   Timer? _timer;
   int _secondsRemaining = 90;
@@ -42,18 +45,15 @@ class _OtpVerificationScreenState
       _secondsRemaining = 120;
     });
 
-    _timer = Timer.periodic(
-      const Duration(seconds: 1),
-          (timer) {
-        if (_secondsRemaining > 0) {
-          setState(() {
-            _secondsRemaining--;
-          });
-        } else {
-          timer.cancel();
-        }
-      },
-    );
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (_secondsRemaining > 0) {
+        setState(() {
+          _secondsRemaining--;
+        });
+      } else {
+        timer.cancel();
+      }
+    });
   }
 
   String get timerText {
@@ -68,46 +68,29 @@ class _OtpVerificationScreenState
     // Call Resend OTP API here
 
     startTimer();
-    if(widget.isComeFrom=="1"){
+    if (widget.isComeFrom == "1") {
       final success = await context
           .read<RegisterProvider>()
-          .sendOtpRegistration(
-        widget.mobile.trim(),
-      );
-      if(success){
-
+          .sendOtpRegistration(widget.mobile.trim());
+      if (success) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(
-              AppStrings.translate(
-                context,
-                'otp_sent_success',
-              ),
-            ),      ),
+            content: Text(AppStrings.translate(context, 'otp_sent_success')),
+          ),
+        );
+      }
+    } else {
+      final success = await context.read<RegisterProvider>().sendOtp(
+        widget.mobile.trim(),widget.userType
+      );
+      if (success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(AppStrings.translate(context, 'otp_sent_success')),
+          ),
         );
       }
     }
-    else{
-      final success = await context
-
-          .read<RegisterProvider>()
-          .sendOtp(
-        widget.mobile.trim(),
-      );
-      if(success){
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              AppStrings.translate(
-                context,
-                'otp_sent_success',
-              ),
-            ),      ),
-        );
-      }
-    }
-
   }
 
   @override
@@ -124,15 +107,10 @@ class _OtpVerificationScreenState
     final defaultPinTheme = PinTheme(
       width: 65,
       height: 65,
-      textStyle: const TextStyle(
-        fontSize: 24,
-        fontWeight: FontWeight.w600,
-      ),
+      textStyle: const TextStyle(fontSize: 24, fontWeight: FontWeight.w600),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: Colors.grey.shade300,
-        ),
+        border: Border.all(color: Colors.grey.shade300),
       ),
     );
 
@@ -143,9 +121,7 @@ class _OtpVerificationScreenState
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(24),
             child: ConstrainedBox(
-              constraints: const BoxConstraints(
-                maxWidth: 700,
-              ),
+              constraints: const BoxConstraints(maxWidth: 700),
               child: Column(
                 children: [
                   Align(
@@ -158,44 +134,29 @@ class _OtpVerificationScreenState
                     ),
                   ),
 
-                  const Icon(
-                    Icons.phone,
-                    color: primaryColor,
-                    size: 60,
-                  ),
+                  const Icon(Icons.phone, color: primaryColor, size: 60),
 
                   const SizedBox(height: 24),
 
-                    Text(
-                      AppStrings.translate(
-                        context,
-                        'please_check_mobile',
-                      ),
-                      textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 30,
-                      fontWeight: FontWeight.w600,
-                    ),
+                  Text(
+                    AppStrings.translate(context, 'please_check_mobile'),
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 30, fontWeight: FontWeight.w600),
                   ),
 
                   const SizedBox(height: 10),
 
                   RichText(
                     textAlign: TextAlign.center,
-                    text:  TextSpan(
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.grey,
-                      ),
+                    text: TextSpan(
+                      style: TextStyle(fontSize: 18, color: Colors.grey),
                       children: [
                         TextSpan(
-                          text: AppStrings.translate(
-                            context,
-                            'sent_code_to',
-                          ),
+                          text: AppStrings.translate(context, 'sent_code_to'),
                         ),
                         TextSpan(
-                          text: "******${widget.mobile.substring(widget.mobile.length - 4)}",
+                          text:
+                              "******${widget.mobile.substring(widget.mobile.length - 4)}",
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: Colors.black87,
@@ -212,15 +173,10 @@ class _OtpVerificationScreenState
                     controller: otpController,
                     length: 6,
                     defaultPinTheme: defaultPinTheme,
-                    focusedPinTheme:
-                    defaultPinTheme.copyDecorationWith(
-                      border: Border.all(
-                        color: primaryColor,
-                        width: 2,
-                      ),
+                    focusedPinTheme: defaultPinTheme.copyDecorationWith(
+                      border: Border.all(color: primaryColor, width: 2),
                     ),
-                    submittedPinTheme:
-                    defaultPinTheme.copyDecorationWith(
+                    submittedPinTheme: defaultPinTheme.copyDecorationWith(
                       color: Colors.grey.shade100,
                     ),
                     onCompleted: (pin) {
@@ -234,15 +190,9 @@ class _OtpVerificationScreenState
                   if (_secondsRemaining > 0)
                     Column(
                       children: [
-                          Text(
-                            AppStrings.translate(
-                              context,
-                              'didnt_get_code',
-                            ),
-                          style: TextStyle(
-                            fontSize: 18,
-                            color: Colors.grey,
-                          ),
+                        Text(
+                          AppStrings.translate(context, 'didnt_get_code'),
+                          style: TextStyle(fontSize: 18, color: Colors.grey),
                         ),
                         const SizedBox(height: 8),
                         Text(
@@ -257,16 +207,12 @@ class _OtpVerificationScreenState
                   else
                     TextButton(
                       onPressed: resendOtp,
-                      child:   Text(
-                        AppStrings.translate(
-                          context,
-                          'resend_otp',
-                        ),
+                      child: Text(
+                        AppStrings.translate(context, 'resend_otp'),
                         style: TextStyle(
                           fontSize: 18,
                           color: Colors.blue,
-                          decoration:
-                          TextDecoration.underline,
+                          decoration: TextDecoration.underline,
                         ),
                       ),
                     ),
@@ -274,8 +220,7 @@ class _OtpVerificationScreenState
                   const SizedBox(height: 40),
 
                   Row(
-                    mainAxisAlignment:
-                    MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Expanded(
                         child: SizedBox(
@@ -285,26 +230,17 @@ class _OtpVerificationScreenState
                               Navigator.pop(context);
                             },
                             style: OutlinedButton.styleFrom(
-                              side: const BorderSide(
-                                color: Color(0xFF6F7A7A),
-                              ),
+                              side: const BorderSide(color: Color(0xFF6F7A7A)),
                               shape: RoundedRectangleBorder(
-                                borderRadius:
-                                BorderRadius.circular(
-                                    14),
+                                borderRadius: BorderRadius.circular(14),
                               ),
                             ),
-                            child:   Text(
-                              AppStrings.translate(
-                                context,
-                                'cancel',
-                              ),
+                            child: Text(
+                              AppStrings.translate(context, 'cancel'),
                               style: TextStyle(
-                                color:
-                                Color(0xFF8B1E1E),
+                                color: Color(0xFF8B1E1E),
                                 fontSize: 18,
-                                fontWeight:
-                                FontWeight.w600,
+                                fontWeight: FontWeight.w600,
                               ),
                             ),
                           ),
@@ -318,85 +254,86 @@ class _OtpVerificationScreenState
                           height: 48,
                           child: ElevatedButton(
                             onPressed: () async {
-                              if(widget.isComeFrom=="1"){
-                                  final success = await context
-                                      .read<RegisterProvider>()
-                                      .verifyOtpRegistration(
-                                    widget.mobile,
-                                    otpController.text.trim(),
+                              if (widget.isComeFrom == "1") {
+                                final success = await context
+                                    .read<RegisterProvider>()
+                                    .verifyOtpRegistration(
+                                      widget.mobile,
+                                      otpController.text.trim(),
+                                    );
+
+                                if (!mounted) return;
+
+                                if (success) {
+                                  final provider = context
+                                      .read<RegisterProvider>();
+
+                                  final otpToken = provider
+                                      .data["data"]["otpVerificationToken"];
+
+                                  final requestBody =
+                                      getIt<RegistrationRequest>().data;
+
+                                  requestBody?["otpVerificationToken"] =
+                                      otpToken;
+
+                                  final registered = await provider.createUser(
+                                    requestBody!,
                                   );
 
                                   if (!mounted) return;
 
-                                  if (success) {
-                                    final provider =
-                                    context.read<RegisterProvider>();
-
-                                    final otpToken = provider.data["data"]
-                                    ["otpVerificationToken"];
-
-                                    final requestBody =
-                                        getIt<RegistrationRequest>().data;
-
-                                    requestBody?["otpVerificationToken"] =
-                                        otpToken;
-
-                                    final registered =
-                                    await provider.createUser(requestBody!);
-
-                                    if (!mounted) return;
-
-                                    if (registered) {
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                          SnackBar(
-                                          content: Text(
-                                            AppStrings.translate(
-                                              context,
-                                              'registration_success',
-                                            ),
+                                  if (registered) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          AppStrings.translate(
+                                            context,
+                                            'registration_success',
                                           ),
                                         ),
-                                      );
+                                      ),
+                                    );
 
-                                      Navigator.pushAndRemoveUntil(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (_) => LoginScreen(),
-                                        ),
-                                            (route) => false,);
-                                    } else {
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(
-                                          content: Text(
-                                         //   provider.error ??
-                                              AppStrings.translate(
-                                                context,
-                                                'registration_failed',
-                                              )
-                                          ),
-                                        ),
-                                      );
-                                    }
+                                    Navigator.pushAndRemoveUntil(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => LoginScreen(),
+                                      ),
+                                      (route) => false,
+                                    );
                                   } else {
                                     ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(
-                                        content: Text( AppStrings.translate(
-                                          context,
-                                          'invalid_otp',
-                                        ),),
+                                      SnackBar(
+                                        content: Text(
+                                          //   provider.error ??
+                                          AppStrings.translate(
+                                            context,
+                                            'registration_failed',
+                                          ),
+                                        ),
                                       ),
                                     );
                                   }
-
-
-                              }
-                              else{
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        AppStrings.translate(
+                                          context,
+                                          'invalid_otp',
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                }
+                              } else {
                                 final success = await context
                                     .read<RegisterProvider>()
                                     .verifyOtp(
-                                  widget.mobile,
-                                  otpController.text.trim(),
-                                );
+                                      widget.mobile,
+                                      otpController.text.trim(),
+                                    );
 
                                 if (!mounted) return;
 
@@ -404,44 +341,40 @@ class _OtpVerificationScreenState
                                   Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (_) =>   ResetPasswordScreen(otp:otpController.text.trim().toString() ,),
+                                      builder: (_) => ResetPasswordScreen(
+                                        otp: otpController.text
+                                            .trim()
+                                            .toString(),
+                                        isComeFrom: widget.isComeFrom,
+                                      ),
                                     ),
                                   );
                                 } else {
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                      content: Text( AppStrings.translate(
-                                        context,
-                                        'invalid_otp',
-                                      ),),
+                                    SnackBar(
+                                      content: Text(
+                                        AppStrings.translate(
+                                          context,
+                                          'invalid_otp',
+                                        ),
+                                      ),
                                     ),
                                   );
                                 }
                               }
-
-
-                            },                            style:
-                            ElevatedButton.styleFrom(
-                              backgroundColor:
-                              const Color(
-                                  0xFF8B1E1E),
-                              shape:
-                              RoundedRectangleBorder(
-                                borderRadius:
-                                BorderRadius
-                                    .circular(14),
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF8B1E1E),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(14),
                               ),
                             ),
-                            child:   Text(
-                              AppStrings.translate(
-                                context,
-                                'verify',
-                              ),
+                            child: Text(
+                              AppStrings.translate(context, 'verify'),
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 18,
-                                fontWeight:
-                                FontWeight.w600,
+                                fontWeight: FontWeight.w600,
                               ),
                             ),
                           ),

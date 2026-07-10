@@ -13,13 +13,13 @@ class RegisterProvider extends ChangeNotifier {
 
 
 
-  Future<bool> sendOtp(String mobile) async {
+  Future<bool> sendOtp(String mobile,String userType) async {
     try {
       isLoading = true;
       error = null;
       notifyListeners();
 
-      final response = await _service.sendOtp(mobile);
+      final response = await _service.sendOtp(mobile,userType);
 
       data = response.data;
 
@@ -39,6 +39,7 @@ class RegisterProvider extends ChangeNotifier {
     required String newPassword,
     required String confirmPassword,
     required String otpReference,
+    required String userType,
   }) async
   {
     try {
@@ -51,6 +52,7 @@ class RegisterProvider extends ChangeNotifier {
           newPassword,
         confirmPassword,
          otpReference,
+          userType
       );
 
       data = response.data;
@@ -86,8 +88,10 @@ Future<bool> sendOtpRegistration(String mobile) async {
       final response = await _service.sendOtpRegistration(mobile);
 
       data = response.data;
+      print("registration     $data");
       return true;
     } catch (e) {
+      print("registration catch    $e");
       error = e.toString();
       return false;
     } finally {

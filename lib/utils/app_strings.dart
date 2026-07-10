@@ -10,7 +10,7 @@ class AppStrings {
       'password': 'Password',
       'continue': 'Continue',
       'enter_username': 'Please enter username',
-      'enter_password': 'Enter 8 digit password',
+      'enter_password': 'Enter minimum 8 digit password',
       'forgot_password': 'Forgot Password?',
       'dont_have_account': 'Don’t have an account? ',
       'register_here': 'Register here',
@@ -135,7 +135,7 @@ class AppStrings {
       'mobile_no':'Mobile No.',
       'enter_city':'Enter Your City Name',
       'privacy_policy':'Privacy Policy',
-
+      'dept_login': 'Department Login',
 
     },
 
@@ -145,7 +145,7 @@ class AppStrings {
       'password': 'पासवर्ड',
       'continue': 'सुरू ठेवा',
       'enter_username': 'कृपया वापरकर्ता नाव प्रविष्ट करा',
-      'enter_password': 'कृपया ६ अंकी पासवर्ड प्रविष्ट करा',
+      'enter_password': 'कृपया किमान ८ अंकी पासवर्ड प्रविष्ट करा',
       'forgot_password': 'पासवर्ड विसरलात?',
       'dont_have_account': 'खाते नाही का? ',
       'register_here': 'येथे नोंदणी करा',
@@ -262,7 +262,7 @@ class AppStrings {
       'mobile_no':'मोबाईल क्रमांक',
       'enter_city':'तुमच्या शहराचे नाव प्रविष्ट करा',
       'privacy_policy': 'गोपनीयता धोरण',
-
+      'dept_login': 'विभागीय लॉगिन',
     },
   };
 

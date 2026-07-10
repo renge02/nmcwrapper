@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:nmc_wrapper/data/remote/network/api.end.points.dart';
 import 'package:nmc_wrapper/repository/registerRepo/service.locator.dart';
 import 'package:nmc_wrapper/utils/secure.storage.dart';
 import 'package:nmc_wrapper/view/login/login.dart';
@@ -26,7 +27,9 @@ class WebPage extends StatefulWidget {
 class _WebPageState extends State<WebPage> {
   InAppWebViewController? controller;
 
-  final String webUrlRequest = 'https://dev-upyog.nmc.gov.in/upyog-ui/citizen';
+  final String webUrlRequest = '${ApiEndPoints.baseAPIUrl}/upyog-ui/citizen';
+  final String webDeptUrlRequest =
+      '${ApiEndPoints.baseAPIUrl}/upyog-ui/employee/user/login';
 
   bool isInjected = false;
   bool isLoading = true;
@@ -71,7 +74,9 @@ class _WebPageState extends State<WebPage> {
     final String escapedToken = jsonEncode(widget.token);
     final String escapedLocale = jsonEncode(locale);
 
-    await controller!.evaluateJavascript(source: """
+    await controller!.evaluateJavascript(
+      source:
+          """
       (function () {
         try {
           const raw = JSON.parse($escapedUserData);
@@ -135,7 +140,8 @@ class _WebPageState extends State<WebPage> {
           console.error('WebView injection failed', e);
         }
       })();
-    """);
+    """,
+    );
 
     await Future.delayed(const Duration(milliseconds: 250));
     await controller!.reload();
@@ -143,96 +149,103 @@ class _WebPageState extends State<WebPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Stack(
-          children: [
-            InAppWebView(
-              initialUrlRequest: URLRequest(url: WebUri(widget.webUrl)),
-              initialSettings: InAppWebViewSettings(
-                javaScriptEnabled: true,
-                useShouldOverrideUrlLoading: true,
-                mediaPlaybackRequiresUserGesture: false,
-                allowsInlineMediaPlayback: true,
-                useHybridComposition: true,
-                geolocationEnabled: true,
-              ),
-              onWebViewCreated: (ctrl) {
-                controller = ctrl;
-              },
-              onLoadStart: (ctrl, url) {
-                setState(() => isLoading = true);
-              },
-              onLoadStop: (ctrl, url) async {
-                await injectSession();
-                setState(() => isLoading = false);
-              },
-              shouldOverrideUrlLoading: (ctrl, action) async {
-                final uri = action.request.url;
-                if (uri == null) return NavigationActionPolicy.ALLOW;
+    return PopScope(
+      canPop: true,
+      child: Scaffold(
+        body: SafeArea(
+          child: Stack(
+            children: [
+              InAppWebView(
+                initialUrlRequest: URLRequest(url: WebUri(widget.webUrl)),
+                initialSettings: InAppWebViewSettings(
+                  javaScriptEnabled: true,
+                  useShouldOverrideUrlLoading: true,
+                  mediaPlaybackRequiresUserGesture: false,
+                  allowsInlineMediaPlayback: true,
+                  useHybridComposition: true,
+                  geolocationEnabled: true,
+                ),
+                onWebViewCreated: (ctrl) {
+                  controller = ctrl;
+                },
+                onLoadStart: (ctrl, url) {
+                  setState(() => isLoading = true);
+                },
+                onLoadStop: (ctrl, url) async {
+                  await injectSession();
+                  setState(() => isLoading = false);
+                },
+                shouldOverrideUrlLoading: (ctrl, action) async {
+                  final uri = action.request.url;
+                  if (uri == null) return NavigationActionPolicy.ALLOW;
 
-                final url = uri.toString();
+                  final url = uri.toString();
 
-                // Logout detection
-                if (url == webUrlRequest) {
-                  await getIt<SecureStorage>().deleteAll();
+                  // Logout detection
+                  if (url == webUrlRequest || url == webDeptUrlRequest) {
+                    await getIt<SecureStorage>().deleteAll();
 
-                  if (!mounted) return NavigationActionPolicy.CANCEL;
+                    if (!mounted) return NavigationActionPolicy.CANCEL;
 
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(builder: (_) => const LoginScreen()),
-                        (route) => false,
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => LoginScreen(
+                          index: url == webDeptUrlRequest ? 1 : 0,
+                        ),
+                      ),
+                      (route) => false,
+                    );
+
+                    return NavigationActionPolicy.CANCEL;
+                  }
+
+                  // Phone / mail / sms
+                  if (url.startsWith("tel:") ||
+                      url.startsWith("mailto:") ||
+                      url.startsWith("sms:")) {
+                    await launchUrl(uri);
+                    return NavigationActionPolicy.CANCEL;
+                  }
+
+                  // External apps
+                  if (url.contains("whatsapp") || url.startsWith("intent:")) {
+                    await launchUrl(uri, mode: LaunchMode.externalApplication);
+                    return NavigationActionPolicy.CANCEL;
+                  }
+
+                  // File downloads
+                  if (url.endsWith(".pdf") ||
+                      url.endsWith(".jpg") ||
+                      url.endsWith(".png")) {
+                    await launchUrl(uri, mode: LaunchMode.externalApplication);
+                    return NavigationActionPolicy.CANCEL;
+                  }
+
+                  return NavigationActionPolicy.ALLOW;
+                },
+                onGeolocationPermissionsShowPrompt: (controller, origin) async {
+                  return GeolocationPermissionShowPromptResponse(
+                    origin: origin,
+                    allow: true,
+                    retain: true,
                   );
-
-                  return NavigationActionPolicy.CANCEL;
-                }
-
-                // Phone / mail / sms
-                if (url.startsWith("tel:") ||
-                    url.startsWith("mailto:") ||
-                    url.startsWith("sms:")) {
-                  await launchUrl(uri);
-                  return NavigationActionPolicy.CANCEL;
-                }
-
-                // External apps
-                if (url.contains("whatsapp") || url.startsWith("intent:")) {
-                  await launchUrl(uri, mode: LaunchMode.externalApplication);
-                  return NavigationActionPolicy.CANCEL;
-                }
-
-                // File downloads
-                if (url.endsWith(".pdf") ||
-                    url.endsWith(".jpg") ||
-                    url.endsWith(".png")) {
-                  await launchUrl(uri, mode: LaunchMode.externalApplication);
-                  return NavigationActionPolicy.CANCEL;
-                }
-
-                return NavigationActionPolicy.ALLOW;
-              },
-              onGeolocationPermissionsShowPrompt: (controller, origin) async {
-                return GeolocationPermissionShowPromptResponse(
-                  origin: origin,
-                  allow: true,
-                  retain: true,
-                );
-              },
-              androidOnPermissionRequest: (controller, origin, resources) async {
-                return PermissionRequestResponse(
-                  resources: resources,
-                  action: PermissionRequestResponseAction.GRANT,
-                );
-              },
-            ),
-            if (isLoading)
-              Container(
-                color: Colors.white70,
-                child: const Center(child: CircularProgressIndicator()),
-
+                },
+                androidOnPermissionRequest:
+                    (controller, origin, resources) async {
+                      return PermissionRequestResponse(
+                        resources: resources,
+                        action: PermissionRequestResponseAction.GRANT,
+                      );
+                    },
               ),
-          ],
+              if (isLoading)
+                Container(
+                  color: Colors.white70,
+                  child: const Center(child: CircularProgressIndicator()),
+                ),
+            ],
+          ),
         ),
       ),
     );

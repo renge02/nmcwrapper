@@ -6,7 +6,7 @@ import 'package:nmc_wrapper/data/remote/network/dio.client.dart';
 class RegisterService {
   final dioClient = DioClient();
 
-  Future<Response> sendOtp(String mobileNo) async {
+  Future<Response> sendOtp(String mobileNo,String userType) async {
     return await dioClient.post(
       '${ApiEndPoints.sendOtpEndPoint}?_=${DateTime.now().millisecondsSinceEpoch}',
       queryParams: {
@@ -19,7 +19,7 @@ class RegisterService {
       data: {
         "otp": {
           "mobileNumber": mobileNo,
-          "userType": "citizen",
+          "userType": userType,
           "type": "passwordreset",
           "tenantId": "pg",
         },
@@ -36,7 +36,9 @@ class RegisterService {
   Future<Response> confirmForgetPassword( String username,
         String newPassword,
         String confirmPassword,
-        String otpReference) async {
+        String otpReference,
+        String userType,
+      ) async {
     final timestamp = DateTime.now().millisecondsSinceEpoch;
 
     return await dioClient.post(
@@ -55,7 +57,7 @@ class RegisterService {
         "confirmPassword": confirmPassword,
         "otpReference": otpReference,
         "tenantId": "pg",
-        "type": "CITIZEN",
+        "type": userType,
         "RequestInfo": {
           "apiId": "Rainmaker",
           "authToken": null,

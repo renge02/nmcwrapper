@@ -28,6 +28,29 @@ class LoginService {
   }
 
 
+  Future<Response> deptLogin(String userName, String password) async {
+    return await dioClient.post(
+      ApiEndPoints.authEndPoint,
+      queryParams: {
+        "_": DateTime.now().millisecondsSinceEpoch,
+      },
+      headers: {
+        "Authorization": "Basic ZWdvdi11c2VyLWNsaWVudDo=",
+      },
+      data: {
+        "userName": "",
+        "password": password,
+        "username": userName,
+        "userType": "EMPLOYEE",
+        "tenantId": "pg.cityb",
+        "scope": "read",
+        "grant_type": "password",
+      },
+      isFormData: true,
+    );
+  }
+
+
   Future<Response> logout(String accessToken) async {
     return await dioClient.post(
       ApiEndPoints.logoutEndPoint,

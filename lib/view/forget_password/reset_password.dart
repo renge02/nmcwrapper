@@ -7,7 +7,8 @@ import 'package:nmc_wrapper/view/login/login.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
   final String otp;
-  const ResetPasswordScreen({super.key, required this.otp});
+  final String isComeFrom;
+  const ResetPasswordScreen({super.key, required this.otp, required this.isComeFrom});
 
   @override
   State<ResetPasswordScreen> createState() =>
@@ -240,6 +241,7 @@ class _ResetPasswordScreenState
                                   confirmPassword:
                                   _confirmPasswordController.text.trim(),
                                   otpReference: widget.otp,
+                                    userType:widget.isComeFrom
                                 );
 
                                 if (success) {

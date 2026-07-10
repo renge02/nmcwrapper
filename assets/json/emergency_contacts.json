@@ -2,269 +2,223 @@
   "categories": [
     {
       "name": "Fire Brigade",
+      "nameMr": "अग्निशमन दल",
       "contacts": [
         {
           "name": "Fire Brigade Headquarters, Shingada Talav",
-          "phoneNumbers": [
-            "0253-2592101",
-            "0253-2509766"
-          ]
+          "nameMr": "अग्निशमन मुख्यालय, शिंगाडा तलाव",
+          "phoneNumbers": ["0253-2592101", "0253-2509766"]
         },
         {
           "name": "Nashik Road Fire Station",
-          "phoneNumbers": [
-            "0253-2461379"
-          ]
+          "nameMr": "नाशिक रोड अग्निशमन केंद्र",
+          "phoneNumbers": ["0253-2461379"]
         },
         {
           "name": "Panchavati Fire Station",
-          "phoneNumbers": [
-            "0253-2512919"
-          ]
+          "nameMr": "पंचवटी अग्निशमन केंद्र",
+          "phoneNumbers": ["0253-2512919"]
         },
         {
           "name": "Satpur Fire Station",
-          "phoneNumbers": [
-            "0253-2350500"
-          ]
+          "nameMr": "सातपूर अग्निशमन केंद्र",
+          "phoneNumbers": ["0253-2350500"]
         },
         {
           "name": "CIDCO Fire Station",
-          "phoneNumbers": [
-            "0253-2393961"
-          ]
+          "nameMr": "सिडको अग्निशमन केंद्र",
+          "phoneNumbers": ["0253-2393961"]
         }
       ]
     },
     {
       "name": "Hospitals",
+      "nameMr": "रुग्णालये",
       "contacts": [
         {
           "name": "BITCO Hospital, Nashik Road",
-          "phoneNumbers": [
-            "0253-2462051"
-          ]
+          "nameMr": "बिटको रुग्णालय, नाशिक रोड",
+          "phoneNumbers": ["0253-2462051"]
         },
         {
           "name": "Indira Gandhi Chowk Hospital",
-          "phoneNumbers": [
-            "0253-2621331"
-          ]
+          "nameMr": "इंदिरा गांधी चौक रुग्णालय",
+          "phoneNumbers": ["0253-2621331"]
         },
         {
           "name": "Dr. Zakir Hussain Kathada Hospital",
-          "phoneNumbers": [
-            "0253-2590049"
-          ]
+          "nameMr": "डॉ. झाकीर हुसेन कठडा रुग्णालय",
+          "phoneNumbers": ["0253-2590049"]
         },
         {
           "name": "Gangapur Hospital",
-          "phoneNumbers": [
-            "0253-2230029"
-          ]
+          "nameMr": "गंगापूर रुग्णालय",
+          "phoneNumbers": ["0253-2230029"]
         }
       ]
     },
     {
       "name": "Police Station",
+      "nameMr": "पोलीस ठाणे",
       "contacts": [
         {
           "name": "Nashik Control Room",
-          "phoneNumbers": [
-            "0253-2570333",
-            "0253-2570334"
-          ]
+          "nameMr": "नाशिक नियंत्रण कक्ष",
+          "phoneNumbers": ["0253-2570333", "0253-2570334"]
         },
         {
           "name": "Police Commissionerate",
-          "phoneNumbers": [
-            "0253-2570183",
-            "0253-2352122"
-          ]
+          "nameMr": "पोलीस आयुक्तालय",
+          "phoneNumbers": ["0253-2570183", "0253-2352122"]
         },
         {
           "name": "Nashik Road Police Station",
-          "phoneNumbers": [
-            "0253-2465533",
-            "0253-2465133"
-          ]
+          "nameMr": "नाशिक रोड पोलीस ठाणे",
+          "phoneNumbers": ["0253-2465533", "0253-2465133"]
         },
         {
           "name": "Panchavati Police Station",
-          "phoneNumbers": [
-            "0253-2629831",
-            "0253-2629830"
-          ]
+          "nameMr": "पंचवटी पोलीस ठाणे",
+          "phoneNumbers": ["0253-2629831", "0253-2629830"]
         },
         {
           "name": "Ambad Police Station",
-          "phoneNumbers": [
-            "0253-2392233",
-            "0253-2393341"
-          ]
+          "nameMr": "अंबड पोलीस ठाणे",
+          "phoneNumbers": ["0253-2392233", "0253-2393341"]
         },
         {
           "name": "Sarkarwada Police Station",
-          "phoneNumbers": [
-            "0253-2305214",
-            "0253-2305225"
-          ]
+          "nameMr": "सरकारवाडा पोलीस ठाणे",
+          "phoneNumbers": ["0253-2305214", "0253-2305225"]
         },
         {
           "name": "Bhadrakali Police Station",
-          "phoneNumbers": [
-            "0253-2305254",
-            "0253-2305255"
-          ]
+          "nameMr": "भद्रकाली पोलीस ठाणे",
+          "phoneNumbers": ["0253-2305254", "0253-2305255"]
         },
         {
           "name": "Deolali Camp Police Station",
-          "phoneNumbers": [
-            "0253-2491233"
-          ]
+          "nameMr": "देवळाली कॅम्प पोलीस ठाणे",
+          "phoneNumbers": ["0253-2491233"]
         },
         {
           "name": "Satpur Police Station",
-          "phoneNumbers": [
-            "0253-2305237",
-            "0253-2305238"
-          ]
+          "nameMr": "सातपूर पोलीस ठाणे",
+          "phoneNumbers": ["0253-2305237", "0253-2305238"]
         },
         {
           "name": "Gangapur Police Station",
-          "phoneNumbers": [
-            "0253-2316657",
-            "0253-2305242"
-          ]
+          "nameMr": "गंगापूर पोलीस ठाणे",
+          "phoneNumbers": ["0253-2316657", "0253-2305242"]
         },
         {
           "name": "Nashik Taluka Police Station",
-          "phoneNumbers": [
-            "0253-2573007"
-          ]
+          "nameMr": "नाशिक तालुका पोलीस ठाणे",
+          "phoneNumbers": ["0253-2573007"]
         },
         {
           "name": "Superintendent Office",
-          "phoneNumbers": [
-            "0253-2578238",
-            "0253-2578239"
-          ]
+          "nameMr": "पोलीस अधीक्षक कार्यालय",
+          "phoneNumbers": ["0253-2578238", "0253-2578239"]
         },
         {
           "name": "Nashik Rural Police Control Room",
-          "phoneNumbers": [
-            "0253-2571585",
-            "0253-2571333"
-          ]
+          "nameMr": "नाशिक ग्रामीण पोलीस नियंत्रण कक्ष",
+          "phoneNumbers": ["0253-2571585", "0253-2571333"]
         }
       ]
     },
     {
       "name": "Water Supply",
+      "nameMr": "पाणीपुरवठा",
       "contacts": [
         {
           "name": "Complaint Centre, Rajiv Gandhi Bhavan",
-          "phoneNumbers": [
-            "145",
-            "0253-2573704"
-          ]
+          "nameMr": "तक्रार केंद्र, राजीव गांधी भवन",
+          "phoneNumbers": ["145", "0253-2573704"]
         },
         {
           "name": "GPO Water Tank",
-          "phoneNumbers": [
-            "0253-2592933"
-          ]
+          "nameMr": "जीपीओ पाण्याची टाकी",
+          "phoneNumbers": ["0253-2592933"]
         },
         {
           "name": "Gandhinagar Water Tank",
-          "phoneNumbers": [
-            "0253-2413045"
-          ]
+          "nameMr": "गांधीनगर पाण्याची टाकी",
+          "phoneNumbers": ["0253-2413045"]
         },
         {
           "name": "Nashik Road Filtration Plant",
-          "phoneNumbers": [
-            "0253-2465269"
-          ]
+          "nameMr": "नाशिक रोड जलशुद्धीकरण प्रकल्प",
+          "phoneNumbers": ["0253-2465269"]
         },
         {
           "name": "CIDCO Water Tank",
-          "phoneNumbers": [
-            "0253-2392247"
-          ]
+          "nameMr": "सिडको पाण्याची टाकी",
+          "phoneNumbers": ["0253-2392247"]
         }
       ]
     },
     {
       "name": "Blood Banks",
+      "nameMr": "रक्तपेढी",
       "contacts": [
         {
           "name": "Janakalyan Blood Bank",
-          "phoneNumbers": [
-            "0253-2573493"
-          ]
+          "nameMr": "जनकल्याण रक्तपेढी",
+          "phoneNumbers": ["0253-2573493"]
         },
         {
           "name": "Aparna Blood Bank",
-          "phoneNumbers": [
-            "0253-2311358"
-          ]
+          "nameMr": "अपर्णा रक्तपेढी",
+          "phoneNumbers": ["0253-2311358"]
         },
         {
           "name": "Kataria Blood Bank",
-          "phoneNumbers": [
-            "0253-2508560",
-            "0253-2578460"
-          ]
+          "nameMr": "कटारिया रक्तपेढी",
+          "phoneNumbers": ["0253-2508560", "0253-2578460"]
         },
         {
           "name": "BITCO Hospital Blood Bank",
-          "phoneNumbers": [
-            "0253-2462051"
-          ]
+          "nameMr": "बिटको रुग्णालय रक्तपेढी",
+          "phoneNumbers": ["0253-2462051"]
         },
         {
           "name": "City Blood Bank",
-          "phoneNumbers": [
-            "0253-2576058"
-          ]
+          "nameMr": "सिटी रक्तपेढी",
+          "phoneNumbers": ["0253-2576058"]
         },
         {
           "name": "Nashik Blood Bank & Blood Transfusion Research Institute",
-          "phoneNumbers": [
-            "0253-2232996",
-            "0253-2311307",
-            "0253-2317307",
-            "7507771527"
-          ]
+          "nameMr": "नाशिक रक्तपेढी व रक्त संक्रमण संशोधन संस्था",
+          "phoneNumbers": ["0253-2232996", "0253-2311307", "0253-2317307", "7507771527"]
         }
       ]
     },
     {
       "name": "Ambulance",
+      "nameMr": "रुग्णवाहिका",
       "contacts": [
         {
           "name": "District Civil Hospital",
-          "phoneNumbers": [
-            "0253-2576106"
-          ]
+          "nameMr": "जिल्हा शासकीय रुग्णालय",
+          "phoneNumbers": ["0253-2576106"]
         }
       ]
     },
     {
       "name": "Theatres",
+      "nameMr": "नाट्यगृहे",
       "contacts": [
         {
           "name": "Mahakavi Kalidas Kalamandir",
-          "phoneNumbers": [
-            "0253-2502930"
-          ]
+          "nameMr": "महाकवी कालिदास कलामंदिर",
+          "phoneNumbers": ["0253-2502930"]
         },
         {
           "name": "Parshuram Saikhedkar Natyagruh",
-          "phoneNumbers": [
-            "0253-2573129"
-          ]
+          "nameMr": "परशुराम सायखेडकर नाट्यगृह",
+          "phoneNumbers": ["0253-2573129"]
         }
       ]
     }

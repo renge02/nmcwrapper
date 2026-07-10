@@ -8,7 +8,9 @@ import 'package:provider/provider.dart';
 import 'otp_verify.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
-  const ForgotPasswordScreen({super.key});
+  final String userType;
+
+  const ForgotPasswordScreen({super.key, required this.userType});
 
   @override
   State<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
@@ -122,7 +124,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                   // Send OTP API
                                   final success = await context
                                       .read<RegisterProvider>()
-                                      .sendOtp(mobileController.text.trim());
+                                      .sendOtp(mobileController.text.trim(),widget.userType);
 
                                   if (!mounted) return;
 
@@ -135,6 +137,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                               .trim()
                                               .toString(),
                                           isComeFrom: "2",
+                                          userType:widget.userType
                                         ),
                                       ),
                                     );

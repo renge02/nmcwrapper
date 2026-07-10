@@ -10,12 +10,16 @@ class ContactTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isMarathi =
+        Localizations.localeOf(context).languageCode == 'mr';
     return Column(
       children: [
         ListTile(
           title: Text(
-            contact.name ?? '',
-            style: GoogleFonts.notoSans(fontSize: 15),
+            isMarathi
+                ? (contact.nameMr ?? contact.name ?? '')
+                : (contact.name ?? ''),
+             style: GoogleFonts.notoSans(fontSize: 15),
           ),
           subtitle: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

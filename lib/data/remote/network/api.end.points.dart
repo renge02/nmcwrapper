@@ -1,6 +1,6 @@
 class ApiEndPoints {
-  //static String baseAPIUrl = "https://dev-upyog.nmc.gov.in"; //dev url
-  static String baseAPIUrl = "https://mynashik.nmc.gov.in";   //production url
+  // static String baseAPIUrl = "https://dev-upyog.nmc.gov.in"; //dev url
+ static String baseAPIUrl = "https://mynashik.nmc.gov.in";   //production url
   //static String baseAPIUrl = "https://staging-upyog.nmc.gov.in";   //staging url
 
   // auth
