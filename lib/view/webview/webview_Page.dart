@@ -15,7 +15,8 @@ class WebDashboardPage extends StatefulWidget {
   const WebDashboardPage({
     super.key,
     required this.token,
-    required this.userData, required this.webUrl,
+    required this.userData,
+    required this.webUrl,
   });
 
   @override
@@ -44,8 +45,9 @@ class _WebDashboardPageState extends State<WebDashboardPage> {
           onPageFinished: (url) async {
             if (isTokenInjected) return;
             isTokenInjected = true;
-if(Platform.isAndroid){
-  await _controller.runJavaScript('''
+            if (Platform.isAndroid) {
+
+              await _controller.runJavaScript('''
               (function () {
                 try {
                   const raw = JSON.parse($escapedUserData);
@@ -76,14 +78,24 @@ if(Platform.isAndroid){
                   const info = user.info || user.UserRequest || user;
                   localStorage.setItem('user-info', JSON.stringify(info));
                   localStorage.setItem('Citizen.user-info', JSON.stringify(info));
+                  
+                  
+                  
+                  
+                  localStorage.setItem('Employee.token', token);           // NOT 'Citizen.token'
+                  localStorage.setItem('Employee.tenant-id', tenantId);
+                  localStorage.setItem('Employee.user-info', userInfo);
+                  localStorage.setItem('Employee.locale', locale);
+                  
                 } catch (e) {
                   console.error('WebView token injection failed', e);
                 }
               })();
             ''');
 
-}else{
-  await _controller.runJavaScript('''
+
+            } else {
+              await _controller.runJavaScript('''
                 (function () {
                   try {
                     const raw = JSON.parse($escapedUserData);
@@ -146,21 +158,14 @@ if(Platform.isAndroid){
                   }
                 })();
               ''');
-
-}
+            }
 
             // Reload once so route guards read injected session
             await _controller.reload();
           },
           onNavigationRequest: (request) {
-
-
-
-            if (!isHandled && request.url==webUrlRequest) {
-
+            if (!isHandled && request.url == webUrlRequest) {
               isHandled = true;
-
-
 
               ///  Navigate to your specific widget
               Navigator.pushReplacement(
@@ -168,33 +173,22 @@ if(Platform.isAndroid){
                 MaterialPageRoute(
                   builder: (_) => LoginScreen(), //  your widget
                 ),
-
               );
 
-
-
               return NavigationDecision.prevent; //  stop loading WebView
-
             }
 
-
-
             return NavigationDecision.navigate;
-
           },
-
         ),
       )
-
       ..loadRequest(Uri.parse(widget.webUrl));
-   }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(child: WebViewWidget(
-        controller: _controller
-        ,)),
+      body: SafeArea(child: WebViewWidget(controller: _controller)),
     );
   }
 }

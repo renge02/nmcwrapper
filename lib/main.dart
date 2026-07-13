@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:nmc_wrapper/data/remote/network/api.end.points.dart';
 import 'package:nmc_wrapper/l10n/app_localizations.dart';
 import 'package:nmc_wrapper/repository/language/LanguageProvider.dart';
 import 'package:nmc_wrapper/repository/loginRepo/login.repo.dart';
@@ -14,6 +16,7 @@ import 'package:nmc_wrapper/utils/secure.storage.dart';
 import 'package:nmc_wrapper/view/dashboard/dashboard.dart';
 import 'package:nmc_wrapper/view/login/login.dart';
 import 'package:nmc_wrapper/view/shared/app.theme.dart';
+import 'package:nmc_wrapper/view/webview/webview.dart';
 import 'package:provider/provider.dart';
 import 'l10n/app_localizations.dart';
 
@@ -92,12 +95,13 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderStateMixin {
-
+class _SplashScreenState extends State<SplashScreen>
+    with SingleTickerProviderStateMixin {
   late Animation<Offset> _slideAnimation;
   late AnimationController _controller;
-   late Animation<double> _fadeAnimation;
+  late Animation<double> _fadeAnimation;
   late Animation<double> _scaleAnimation;
+
   @override
   void initState() {
     super.initState();
@@ -107,35 +111,27 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
       vsync: this,
     );
 
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _controller,
         curve: const Interval(0.0, 0.6, curve: Curves.easeIn),
       ),
     );
 
-    _scaleAnimation = Tween<double>(
-      begin: 0.7,
-      end: 1.0,
-    ).animate(
+    _scaleAnimation = Tween<double>(begin: 0.7, end: 1.0).animate(
       CurvedAnimation(
         parent: _controller,
         curve: const Interval(0.2, 1.0, curve: Curves.easeOutBack),
       ),
     );
 
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.25),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: const Interval(0.0, 1.0, curve: Curves.easeOut),
-      ),
-    );
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.25), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _controller,
+            curve: const Interval(0.0, 1.0, curve: Curves.easeOut),
+          ),
+        );
 
     _controller.forward();
     moveNext(2);
@@ -155,15 +151,21 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
 
           final value = await getIt<SecureStorage>().getUserData();
 
-          debugPrint("UserData: $value");
+          debugPrint("UserData: $value ");
 
           if (!mounted) return;
 
           if (value != null) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (_) => const DashboardScreen()),
-            );
+            final Map<String, dynamic> user = jsonDecode(value);
+            String userType = user['type'];
+            if (userType == "EMPLOYEE") {
+              departmentlogin();
+            } else {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => const DashboardScreen()),
+              );
+            }
           } else {
             Navigator.pushReplacement(
               context,
@@ -185,13 +187,27 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     });
   }
 
+  departmentlogin() async {
+    String token = await getIt<SecureStorage>().getToken() ?? '';
+    String userData = await getIt<SecureStorage>().getUserData() ?? '';
+    final String webUrl =
+        '${ApiEndPoints.baseAPIUrl}/upyog-ui/employee/pgr/HomeDashboard';
+    context.pushReplacementWidget(
+      WebPage(
+        webUrl: webUrl,
+        token: token,
+        userData: userData,
+        userType: "EMPLOYEE",
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.appBarColor,
       body: Center(
-        child:
-        FadeTransition(
+        child: FadeTransition(
           opacity: _fadeAnimation,
           child: SlideTransition(
             position: _slideAnimation,

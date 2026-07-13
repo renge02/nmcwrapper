@@ -12,12 +12,14 @@ class WebPage extends StatefulWidget {
   final String token;
   final String webUrl;
   final String userData;
+  final String userType;
 
   const WebPage({
     super.key,
     required this.token,
     required this.userData,
     required this.webUrl,
+      this.userType='CITIZEN',
   });
 
   @override
@@ -73,8 +75,74 @@ class _WebPageState extends State<WebPage> {
     final String escapedUserData = jsonEncode(widget.userData);
     final String escapedToken = jsonEncode(widget.token);
     final String escapedLocale = jsonEncode(locale);
+    final String escapedTenantId = jsonEncode("pg.cityb");
+    final escapedUserType = jsonEncode(widget.userType);
 
-    await controller!.evaluateJavascript(
+    await controller!.evaluateJavascript(source: '''
+       (function () {
+  try {
+    const raw = JSON.parse($escapedUserData);
+    const user = (typeof raw === 'string') ? JSON.parse(raw) : raw;
+
+    const token = $escapedToken;
+    const userType = $escapedUserType;
+    const tenantId = $escapedTenantId;
+    const locale = $escapedLocale;
+
+    const userInfo = JSON.stringify(user.info || user.UserRequest || user);
+
+    const now = Date.now();
+    const ttl = 86400;
+
+    const pack = (value) => JSON.stringify({
+      value: value,
+      ttl: ttl,
+      expiry: now + ttl * 1000
+    });
+
+    // Digit User
+    sessionStorage.setItem('Digit.User', pack(user));
+    localStorage.setItem('Digit.User', pack(user));
+
+    // User Type
+    sessionStorage.setItem('Digit.userType', pack(userType));
+    sessionStorage.setItem('Digit.user_type', pack(userType));
+    localStorage.setItem('Digit.userType', pack(userType));
+    localStorage.setItem('Digit.user_type', pack(userType));
+
+    // Locale
+    sessionStorage.setItem('Digit.locale', pack(locale));
+    localStorage.setItem('Digit.locale', pack(locale));
+
+    // Generic keys
+    localStorage.setItem('token', token);
+    localStorage.setItem('tenant-id', tenantId);
+    localStorage.setItem('user-info', userInfo);
+    localStorage.setItem('locale', locale);
+
+    // Role specific keys
+    if (userType === "EMPLOYEE") {
+
+      localStorage.setItem('Employee.token', token);
+      localStorage.setItem('Employee.tenant-id', tenantId);
+      localStorage.setItem('Employee.user-info', userInfo);
+      localStorage.setItem('Employee.locale', locale);
+
+    } else {
+
+      localStorage.setItem('Citizen.token', token);
+      localStorage.setItem('Citizen.tenant-id', tenantId);
+      localStorage.setItem('Citizen.user-info', userInfo);
+      localStorage.setItem('Citizen.locale', locale);
+
+    }
+
+  } catch (e) {
+    console.error("WebView token injection failed", e);
+  }
+})();''');
+
+   /* await controller!.evaluateJavascript(
       source:
           """
       (function () {
@@ -141,7 +209,7 @@ class _WebPageState extends State<WebPage> {
         }
       })();
     """,
-    );
+    );*/
 
     await Future.delayed(const Duration(milliseconds: 250));
     await controller!.reload();
@@ -174,6 +242,7 @@ class _WebPageState extends State<WebPage> {
                 onLoadStop: (ctrl, url) async {
                   await injectSession();
                   setState(() => isLoading = false);
+
                 },
                 shouldOverrideUrlLoading: (ctrl, action) async {
                   final uri = action.request.url;

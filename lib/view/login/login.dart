@@ -428,7 +428,7 @@ class _LoginScreenState extends State<LoginScreen>
     final String webUrl =
         '${ApiEndPoints.baseAPIUrl}/upyog-ui/employee/pgr/HomeDashboard';
     context.pushReplacementWidget(
-      WebPage(webUrl: webUrl, token: token, userData: userData),
+      WebPage(webUrl: webUrl, token: token, userData: userData,userType: "EMPLOYEE",),
     );
   }
 }
