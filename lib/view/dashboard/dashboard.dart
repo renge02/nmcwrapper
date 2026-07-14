@@ -1,11 +1,16 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:nmc_wrapper/data/remote/network/api.end.points.dart';
+import 'package:nmc_wrapper/models/electedModel/elected_model.dart';
 import 'package:nmc_wrapper/repository/language/LanguageProvider.dart';
 import 'package:nmc_wrapper/repository/registerRepo/service.locator.dart';
 import 'package:nmc_wrapper/utils/app_strings.dart';
 import 'package:nmc_wrapper/utils/extensions.dart';
 import 'package:nmc_wrapper/utils/secure.storage.dart';
+import 'package:nmc_wrapper/view/elected_members/elected_members_list.dart';
 import 'package:nmc_wrapper/view/important_contacts/helpline_screen.dart';
 import 'package:nmc_wrapper/view/shared/app.theme.dart';
 import 'package:nmc_wrapper/view/shared/widgets/custom_alert.dart';
@@ -615,11 +620,28 @@ List<Service> civicServices = [
   ),
   Service(
     "news",
-    "assets/images/news.png",
+    "assets/images/laptop.png",
+    greyLayout: false,
     onTap: (context) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppStrings.translate(context, 'coming_soon'))),
-      );
+      openUrl('https://nmc.gov.in/home/index/M');
+      },
+  ),
+  Service(
+    "know_our_works",
+    "assets/images/work.png",
+    greyLayout: false,
+    onTap: (context) {
+      openUrl('https://nmcdepartmentapp.nmcutilities.in/view_history');
+    },
+  ),
+  Service(
+    "elected_members",
+    "assets/images/election.png",
+    greyLayout: false,
+    onTap: (context) async {
+
+      context.pushWidget(ElectedRepresentativeScreen(categories: [],));
+
     },
   ),
 
@@ -633,25 +655,8 @@ List<Service> civicServices = [
     },
   ),
 
-  Service(
-    "know_our_works",
-    "assets/images/work.png",
-    onTap: (context) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppStrings.translate(context, 'coming_soon'))),
-      );
-    },
-  ),
 
-  Service(
-    "elected_members",
-    "assets/images/election.png",
-    onTap: (context) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppStrings.translate(context, 'coming_soon'))),
-      );
-    },
-  ),
+
 
   Service(
     "administration",
@@ -740,3 +745,4 @@ Future<void> makePhoneCall(String phoneNumber) async {
     await launchUrl(uri);
   }
 }
+

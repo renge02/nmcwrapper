@@ -1,0 +1,80 @@
+{
+  "moduleName": {
+    "en": "Elected Representatives",
+    "mr": "लोकप्रतिनिधी"
+  },
+  "categories": [
+    {
+      "id": "mayor",
+      "title": {
+        "en": "Mayor",
+        "mr": "महापौर"
+      },
+      "details": {
+        "name": {
+          "en": "Shrimati. Himgauri Aher - Aadke",
+          "mr": "श्रीमती. हिमगौरी आहेर - आडके"
+        },
+        "party": {
+          "en": "Bhartiya Janata Party",
+          "mr": "भारतीय जनता पक्ष"
+        },
+        "wardNumber": "7B",
+        "mobileNumber": "9096351515",
+        "address": {
+          "en": "Girija Villa, Pumping Station, Gangapur Road, Nashik 422013",
+          "mr": "गिरीजा व्हिला, पंपिंग स्टेशन, गंगापूर रोड, नाशिक - ४२२०१३"
+        },
+        "photoUrl": ""
+      }
+    },
+    {
+      "id": "deputyMayor",
+      "title": {
+        "en": "Deputy Mayor",
+        "mr": "उपमहापौर"
+      },
+      "details": {
+        "name": {
+          "en": "Shri. Shinde Vilas Ramdas",
+          "mr": "श्री. शिंदे विलास रामदास"
+        },
+        "party": {
+          "en": "Shivsena",
+          "mr": "शिवसेना"
+        },
+        "wardNumber": "8D",
+        "mobileNumber": "8007170000",
+        "address": {
+          "en": "Anusai Bunglow, Near Patil Lawns, Someshwar, Gangapur Road, Nashik 422222",
+          "mr": "अनुसया बंगला, पाटील लॉन्स जवळ, सोमेश्वर, गंगापूर रोड, नाशिक - ४२२२२२"
+        },
+        "photoUrl": ""
+      }
+    },
+    {
+      "id": "standingCommitteeChairman",
+      "title": {
+        "en": "Chairman, Standing Committee",
+        "mr": "स्थायी समिती सभापती"
+      },
+      "details": {
+        "name": {
+          "en": "Shri. Sanap Machindra Balasaheb",
+          "mr": "श्री. सानप मच्छिंद्र बाळासाहेब"
+        },
+        "party": {
+          "en": "Bhartiya Janata Party",
+          "mr": "भारतीय जनता पक्ष"
+        },
+        "wardNumber": "3A",
+        "mobileNumber": "9673341777",
+        "address": {
+          "en": "Krushna Kunj, Krushnanagar, Old Adgaon Naka",
+          "mr": "कृष्णा कुंज, कृष्णानगर, जुना आडगाव नाका"
+        },
+        "photoUrl": ""
+      }
+    }
+  ]
+}

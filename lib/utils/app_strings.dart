@@ -113,7 +113,7 @@ class AppStrings {
 
       'nmc_help_center':'NMC Help Centre',
       'faq':'FAQ',
-      'news':'NMC\nNEWS',
+      'news':'NMC\nWebsite',
       'know_our_works':'Know our\nWorks',
       'elected_members':'Elected\nMembers',
       'administration':'Administration',
@@ -238,7 +238,7 @@ class AppStrings {
 
       'nmc_help_center':'एनएमसी मदत केंद्र',
       'faq':'वारंवार विचारले जाणारे प्रश्न',
-      'news':'एनएमसी\nबातम्या',
+      'news': 'एनएमसी\nवेबसाइट',
       'know_our_works':'आमची\nकामे',
       'elected_members':'निवडून आलेले\nसदस्य',
       'administration':'प्रशासन',
