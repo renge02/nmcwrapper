@@ -128,7 +128,6 @@ class AppStrings {
       "bloodBank": "Blood Banks",
       'emergency_contacts': 'Emergency Contacts',
       'search': 'Search',
-
       'save':'Save',
       'name':'Name',
       'city':'City',
@@ -136,6 +135,9 @@ class AppStrings {
       'enter_city':'Enter Your City Name',
       'privacy_policy':'Privacy Policy',
       'dept_login': 'Department Login',
+      'party': 'Party',
+      'address': 'Address',
+      'ward_number': 'Ward Number',
 
     },
 
@@ -263,6 +265,9 @@ class AppStrings {
       'enter_city':'तुमच्या शहराचे नाव प्रविष्ट करा',
       'privacy_policy': 'गोपनीयता धोरण',
       'dept_login': 'विभागीय लॉगिन',
+      "party": "पक्ष",
+      "address": "पत्ता",
+      "ward_number": "प्रभाग क्रमांक"
     },
   };
 

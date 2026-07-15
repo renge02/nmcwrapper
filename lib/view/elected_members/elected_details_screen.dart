@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:nmc_wrapper/utils/app_strings.dart';
 import 'package:nmc_wrapper/utils/extensions.dart';
 import 'package:nmc_wrapper/view/shared/app.theme.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 import '../../models/electedModel/elected_model.dart';
 
 class RepresentativeDetailsScreen extends StatelessWidget {
@@ -116,7 +116,10 @@ class RepresentativeDetailsScreen extends StatelessWidget {
                     children: [
 
                       _buildRow(
-                        "Party",
+                          AppStrings.translate(
+                              context,
+                              'party'
+                          ),
                         isMarathi
                             ? details.party?.mr ?? ""
                             : details.party?.en ?? "",
@@ -125,7 +128,10 @@ class RepresentativeDetailsScreen extends StatelessWidget {
                       const SizedBox(height: 15),
 
                       _buildRow(
-                        "Ward Number",
+                        AppStrings.translate(
+                            context,
+                            'ward_number'
+                        ),
                         details.wardNumber ?? "",
                       ),
 
@@ -142,7 +148,10 @@ class RepresentativeDetailsScreen extends StatelessWidget {
                               children: [
 
                                 Text(
-                                  "Mobile",
+                                  AppStrings.translate(
+                                      context,
+                                      'mobile'
+                                  ),
                                   style: GoogleFonts.notoSans(
                                     color: AppTheme.appBarColor,
                                     fontWeight: FontWeight.bold,
@@ -187,7 +196,10 @@ class RepresentativeDetailsScreen extends StatelessWidget {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          "Address",
+                          AppStrings.translate(
+                              context,
+                              'address'
+                          ),
                           style: GoogleFonts.notoSans(
                             color: AppTheme.appBarColor,
                             fontWeight: FontWeight.bold,
