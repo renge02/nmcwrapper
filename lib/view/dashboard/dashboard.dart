@@ -419,13 +419,13 @@ class ServiceCard extends StatelessWidget {
               ? Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Image.asset(item.image, width: 18, height: 18),
+                    Image.asset(item.image, width: 28, height: 22),
                     const SizedBox(height: 5),
                     Text(
                       AppStrings.translate(context, item.title),
                       textAlign: TextAlign.center,
                       maxLines: 5,
-                      style: GoogleFonts.notoSans(fontSize: 9),
+                      style: GoogleFonts.notoSans(fontSize: 10),
                     ),
                   ],
                 )
@@ -456,7 +456,7 @@ class Service {
 List<Service> services = [
   Service(
     'grievance_redressal',
-    "assets/images/sentiment_emoji.png",
+    "assets/images/grievance.png",
     onTap: (context) async {
       String token = await getIt<SecureStorage>().getToken() ?? '';
       String userData = await getIt<SecureStorage>().getUserData() ?? '';
@@ -468,17 +468,9 @@ List<Service> services = [
     greyLayout: false,
   ),
   Service(
-    "property_tax",
-    "assets/images/property_tax.png",
-    greyLayout: false,
-    onTap: (context) {
-      openUrl("https://propertytax.nmctax.in/");
-    },
-  ),
-  Service(
     "marriage_registration",
-    "assets/images/marriage_regis.png",
-    greyLayout: true,
+    "assets/images/certificate.png",
+    greyLayout: false,
     onTap: (context) async {
       String accessToken = await getIt<SecureStorage>().getToken() ?? '';
       String userData = await getIt<SecureStorage>().getUserData() ?? '';
@@ -493,37 +485,44 @@ List<Service> services = [
           "&tenantId=$tenantId"
           "&logoutRedirectUrl=${Uri.encodeComponent(logoutRedirectUrl)}";
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppStrings.translate(context, 'coming_soon'))),
-      );
-      /* context.pushWidget(
+
+      context.pushWidget(
         WebPage(webUrl: webUrl, token: accessToken, userData: userData),
-      );*/
+      );
     },
   ),
-
   Service(
     "challan_payment",
-    "assets/images/accounting_bal.png",
-    greyLayout: true,
+    "assets/images/rupee.png",
+    greyLayout: false,
     onTap: (context) async {
       String token = await getIt<SecureStorage>().getToken() ?? '';
       String userData = await getIt<SecureStorage>().getUserData() ?? '';
       final String webUrl =
           '${ApiEndPoints.baseAPIUrl}/upyog-ui/citizen/mcollect-home';
 
-     /* context.pushWidget(
+      context.pushWidget(
         WebPage(webUrl: webUrl, token: token, userData: userData),
-      );*/
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppStrings.translate(context, 'coming_soon'))),
       );
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   SnackBar(content: Text(AppStrings.translate(context, 'coming_soon'))),
+      // );
     },
   ),
 
   Service(
+    "property_tax",
+    "assets/images/property_tax.png",
+    greyLayout: false,
+    onTap: (context) {
+      openUrl("https://propertytax.nmctax.in/");
+    },
+  ),
+
+
+  Service(
     "trade_license",
-    "assets/images/trade_lic.png",
+    "assets/images/trade.png",
     onTap: (context) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(AppStrings.translate(context, 'coming_soon'))),
@@ -533,7 +532,7 @@ List<Service> services = [
 
   Service(
     "hoarding_permission",
-    "assets/images/hoarding_per.png",
+    "assets/images/hoarding.png",
     onTap: (context) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(AppStrings.translate(context, 'coming_soon'))),
@@ -543,7 +542,7 @@ List<Service> services = [
 
   Service(
     "tree_cutting_permission",
-    "assets/images/tree.png",
+    "assets/images/tree_cut.png",
     onTap: (context) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(AppStrings.translate(context, 'coming_soon'))),
@@ -553,7 +552,7 @@ List<Service> services = [
 
   Service(
     "noc_issuance",
-    "assets/images/noc.png",
+    "assets/images/insurrance.png",
     onTap: (context) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(AppStrings.translate(context, 'coming_soon'))),
@@ -563,7 +562,7 @@ List<Service> services = [
 
   Service(
     "water_connection",
-    "assets/images/home.png",
+    "assets/images/tap.png",
     onTap: (context) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(AppStrings.translate(context, 'coming_soon'))),
@@ -573,7 +572,7 @@ List<Service> services = [
 
   Service(
     "birth_death",
-    "assets/images/p_women.png",
+    "assets/images/certificate.png",
     onTap: (context) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(AppStrings.translate(context, 'coming_soon'))),
@@ -583,7 +582,7 @@ List<Service> services = [
 
   Service(
     "health_facility",
-    "assets/images/hospital.png",
+    "assets/images/registration.png",
     onTap: (context) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(AppStrings.translate(context, 'coming_soon'))),
@@ -646,25 +645,16 @@ List<Service> civicServices = [
   ),
 
   Service(
-    "faq",
-    "assets/images/faq.png",
-    onTap: (context) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppStrings.translate(context, 'coming_soon'))),
-      );
-    },
-  ),
-
-
-
-
-  Service(
     "administration",
     "assets/images/admin.png",
+    greyLayout: false,
     onTap: (context) {
-      ScaffoldMessenger.of(context).showSnackBar(
+
+      openUrl('https://nmc.gov.in/home/getfrontpage/7/191/E#tabs|History:tab1');
+
+      /*ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(AppStrings.translate(context, 'coming_soon'))),
-      );
+      );*/
     },
   ),
 ];

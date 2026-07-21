@@ -50,9 +50,7 @@ void showAlert(
                 style: context
                     .bodyMedium()
                     ?.copyWith(
-                      color: Theme.of(
-                        context,
-                      ).appBarTheme.titleTextStyle?.color,
+                      color: Colors.white,
                     )
                     .bold(fontWeight: FontWeight.w600),
                 btnText ?? AppStrings.translate(context, 'ok'),

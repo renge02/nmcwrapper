@@ -278,7 +278,7 @@ class _WebPageState extends State<WebPage> {
                   }
 
                   // External apps
-                  if (url.contains("whatsapp") || url.startsWith("intent:")) {
+                  if (url.contains("whatsapp") || url.startsWith("intent:")|| url.startsWith("upi:")) {
                     await launchUrl(uri, mode: LaunchMode.externalApplication);
                     return NavigationActionPolicy.CANCEL;
                   }
@@ -307,7 +307,33 @@ class _WebPageState extends State<WebPage> {
                         action: PermissionRequestResponseAction.GRANT,
                       );
                     },
-              ),
+                onReceivedError: (controller, request, error) async {
+                  final uri = request.url;
+
+                  if (uri.scheme == "upi") {
+                    await launchUrl(
+                      uri,
+                      mode: LaunchMode.externalApplication,
+                    );
+                  }
+                },
+                onCreateWindow: (controller, request) async {
+                  final uri = request.request.url;
+
+                  debugPrint("Popup URL: $uri");
+
+                  if (uri != null &&
+                      (uri.scheme == "upi" || uri.scheme == "intent")) {
+                    await launchUrl(
+                      uri,
+                      mode: LaunchMode.externalApplication,
+                    );
+
+                    return false;
+                  }
+
+                  return false;
+                },),
               if (isLoading)
                 Container(
                   color: Colors.white70,
