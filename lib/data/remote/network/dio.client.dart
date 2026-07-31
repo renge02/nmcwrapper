@@ -38,6 +38,7 @@ class DioClient {
           // }
 
           logger("➡️ REQUEST: ${options.method} ${options.path}");
+          logger("🌐 URL: ${options.uri}");
           logger("Headers: ${options.headers}");
           logger("Data: ${options.data}");
 

@@ -404,13 +404,16 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                   onPressed: () async {
                                     if (_formKey.currentState?.validate() ??
                                         false) {
+                                      List<String> parts = fullNameController.text
+                                          .trim().split(" ");
+                                      String firstName = parts[0];
+                                      String lastName = parts.length > 1 ? parts[1] : "";
                                       final requestBody = {
                                         "email": emailController.text.trim(),
                                         "password": passwordController.text
                                             .trim(),
-                                        "firstName": fullNameController.text
-                                            .trim(),
-                                        "lastName": ".",
+                                        "firstName":firstName,
+                                        "lastName": lastName,
                                         "mobile": mobileController.text.trim(),
                                         "address": addressController.text
                                             .trim(),

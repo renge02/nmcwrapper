@@ -327,7 +327,20 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                                     ),
                                   );
                                 }
-                              } else {
+                              } else{
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => ResetPasswordScreen(
+                                      otp: otpController.text
+                                          .trim()
+                                          .toString(),
+                                      isComeFrom: widget.isComeFrom,
+                                    ),
+                                  ),
+                                );
+                              }
+                             /* else {
                                 final success = await context
                                     .read<RegisterProvider>()
                                     .verifyOtp(
@@ -361,7 +374,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                                     ),
                                   );
                                 }
-                              }
+                              }*/
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: const Color(0xFF8B1E1E),

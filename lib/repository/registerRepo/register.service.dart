@@ -42,26 +42,41 @@ class RegisterService {
     final timestamp = DateTime.now().millisecondsSinceEpoch;
 
     return await dioClient.post(
-      '${ApiEndPoints.confirmForgetPWDEndPoint}?tenantId=pg.cityb&_=$timestamp',
+      ApiEndPoints.confirmForgetPWDEndPoint,
       queryParams: {
-        "tenantId":"pg.cityb",
-        '_': DateTime.now().millisecondsSinceEpoch.toString(),
+        "tenantId": "pg.cityb",
+        "_": DateTime.now().millisecondsSinceEpoch,
       },
-      headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/json",
-      },
+        headers: {
+          "accept": "application/json, text/plain, */*",
+          "accept-language": "en-US,en;q=0.9",
+          "content-type": "application/json;charset=UTF-8",
+          "origin": "https://mynashik.nmc.gov.in",
+          "priority": "u=1, i",
+          "referer":
+          "https://mynashik.nmc.gov.in/upyog-ui/citizen/login",
+          "sec-ch-ua":
+          "\"Not;A=Brand\";v=\"8\", \"Chromium\";v=\"150\", \"Google Chrome\";v=\"150\"",
+          "sec-ch-ua-mobile": "?0",
+          "sec-ch-ua-platform": "\"Windows\"",
+          "sec-fetch-dest": "empty",
+          "sec-fetch-mode": "cors",
+          "sec-fetch-site": "same-origin",
+          "user-agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36",
+        },
+
       data: {
         "username": username,
         "newPassword": newPassword,
         "confirmPassword": confirmPassword,
         "otpReference": otpReference,
         "tenantId": "pg",
-        "type": userType,
+        "type": "CITIZEN",
         "RequestInfo": {
           "apiId": "Rainmaker",
           "authToken": null,
-          "msgId": "$timestamp|en_IN",
+          "msgId": "${DateTime.now().millisecondsSinceEpoch}|en_IN",
           "plainAccessRequest": {},
 
         },

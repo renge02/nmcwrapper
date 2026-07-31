@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.mynasik.app"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 37
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -25,9 +25,9 @@ android {
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
-        versionCode = 5
-        versionName = "1.04"
+        targetSdk = 36
+        versionCode = 6
+        versionName = "1.05"
     }
 
     buildTypes {
