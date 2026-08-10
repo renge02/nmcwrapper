@@ -119,6 +119,8 @@ Future<bool> sendOtpRegistration(String mobile) async {
       notifyListeners();
     }
   }
+
+
   Future<bool> checkRegistrationEmail(String email) async {
     try {
       isLoading = true;
@@ -139,6 +141,49 @@ Future<bool> sendOtpRegistration(String mobile) async {
     }
   }
 
+  Future<bool> checkUserNameRegistration(String userName) async {
+    try {
+      isLoading = true;
+      error = null;
+      data = null;
+      notifyListeners();
+
+      final response =
+      await _service.checkUsernameRegistration(userName);
+
+      // Store complete API response
+      data = response.data;
+
+      // Get API message
+      final String? message = response.data['message']?.toString();
+
+      // Get API status
+      final int? status =
+      response.data['responseInfo']?['status'];
+
+      // Username available
+      if (response.data['valid'] == true &&
+          message == 'Username is available') {
+        return true;
+      }
+
+      // Username already exists / API validation failed
+      if (response.data['valid'] == false) {
+        error = message ?? 'Username is not available';
+        return false;
+      }
+
+      // Handle unexpected response
+      error = message ?? 'Unable to check username';
+      return false;
+    } catch (e) {
+      error = e.toString();
+      return false;
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
 
   Future<bool> verifyOtp(String mobile, String otp) async {
     try {

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 
 import 'package:nmc_wrapper/data/remote/network/api.end.points.dart';
@@ -105,6 +107,26 @@ class RegisterService {
         "Content-Type": "application/json",
       },
       data: {"mobile": mobileNo},
+    );
+  }
+  Future<Response> checkUsernameRegistration(String userName) async {
+    var data = json.encode({
+      "RequestInfo": {
+        "apiId": "Rainmaker",
+        "authToken": null,
+        "msgId": "${DateTime.now().millisecondsSinceEpoch}|en_IN",
+      },
+      "userName": userName,
+      "tenantId": "pg"
+    });
+    return await dioClient.post(
+      ApiEndPoints.checkUserNameRegistrationEndPoint,
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+      },
+      data: data
+
     );
   }
 

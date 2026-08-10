@@ -9,6 +9,8 @@ class ApiEndPoints {
   static final String sendOtpEndPoint = '/user-otp/v1/_send';
   static final String checkRegistrationEndPoint =
       '/bap/auth/check-registration';
+  static final String checkUserNameRegistrationEndPoint =
+      '/user/_validateusername';
   static final String sendOTPRegistrationEndPoint =
       '/bap/auth/register-otp/send';
   static final String verifyOTPRegistrationEndPoint =

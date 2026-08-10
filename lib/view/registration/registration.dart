@@ -28,7 +28,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   bool isPasswordVisible = false;
   bool isConfirmPasswordVisible = false;
-  final fullNameController = TextEditingController();
+  final firstNameController = TextEditingController();
+  final lastNameController = TextEditingController();
   final userNameController = TextEditingController();
   final mobileController = TextEditingController();
   final addressController = TextEditingController();
@@ -37,18 +38,15 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   final genderController = TextEditingController();
   final confirmPasswordController = TextEditingController();
 
-
-   bool isMobileAvailable = true;
-   bool? isEmailAvailable; // null = not checked yet
+  bool isMobileAvailable = true;
+  bool? isEmailAvailable; // null = not checked yet
   String? emailMessage;
+  bool? isUserNameAvailable; // null = not checked yet
+  String? userNameMessage;
   Timer? _emailDebounce;
   String? selectedGender;
 
-
   final TextEditingController dobController = TextEditingController();
-
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -93,8 +91,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                               6.height(),
                               Row(
                                 children: [
-                                    Text(
-                                      AppStrings.translate(context,'citizen_registration'),
+                                  Text(
+                                    AppStrings.translate(
+                                      context,
+                                      'citizen_registration',
+                                    ),
                                     style: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
@@ -104,29 +105,56 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                 ],
                               ),
                               CustomTextField(
-                                title: AppStrings.translate(context,'full_name'),                                showRequiredSign: true,
+                                title: AppStrings.translate(
+                                  context,
+                                  'first_name',
+                                ),
+                                showRequiredSign: true,
                                 textInputAction: TextInputAction.next,
                                 length: 80,
                                 lines: 1,
-                                textController: fullNameController,
+                                textController: firstNameController,
                                 validator: (value) {
                                   if (value!.trim().isEmpty) {
                                     return AppStrings.translate(
-                                        context,
-                                        'please_enter_full_name'
-                                    );                                  }
+                                      context,
+                                      'please_enter_first_name',
+                                    );
+                                  }
 
                                   return null;
                                 },
                               ),
                               CustomTextField(
-                                title: AppStrings.translate(context,'dob'),
+                                title: AppStrings.translate(
+                                  context,
+                                  'last_name',
+                                ),
+                                showRequiredSign: true,
+                                textInputAction: TextInputAction.next,
+                                length: 80,
+                                lines: 1,
+                                textController: lastNameController,
+                                validator: (value) {
+                                  if (value!.trim().isEmpty) {
+                                    return AppStrings.translate(
+                                      context,
+                                      'please_enter_last_name',
+                                    );
+                                  }
+                                  return null;
+                                },
+                              ),
+                              CustomTextField(
+                                title: AppStrings.translate(context, 'dob'),
                                 showRequiredSign: true,
                                 textInputAction: TextInputAction.next,
                                 textController: dobController,
                                 readOnly: true,
                                 onTap: () async {
-                                  final locale = context.read<LanguageProvider>().locale;
+                                  final locale = context
+                                      .read<LanguageProvider>()
+                                      .locale;
                                   final today = DateTime.now();
 
                                   final eighteenYearsAgo = DateTime(
@@ -140,7 +168,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                     context: context,
                                     initialDate: eighteenYearsAgo,
                                     firstDate: DateTime(1900),
-                                    lastDate: eighteenYearsAgo
+                                    lastDate: eighteenYearsAgo,
                                   );
                                   if (dob != null) {
                                     dobController.text =
@@ -151,9 +179,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                 validator: (value) {
                                   if (value!.trim().isEmpty) {
                                     return AppStrings.translate(
-                                        context,
-                                        'select_dob'
-                                    );                                  }
+                                      context,
+                                      'select_dob',
+                                    );
+                                  }
 
                                   return null;
                                 },
@@ -185,9 +214,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                     }
                                   }
                                 },
-                                child:
-                                CustomTextField(
-                                  title: AppStrings.translate(context,'mobile'),
+                                child: CustomTextField(
+                                  title: AppStrings.translate(
+                                    context,
+                                    'mobile',
+                                  ),
                                   showRequiredSign: true,
                                   textInputType: TextInputType.phone,
                                   textInputAction: TextInputAction.next,
@@ -199,35 +230,56 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                         value.trim().isEmpty ||
                                         value.length != 10) {
                                       return AppStrings.translate(
-                                          context,
-                                          'enter_mobile'
-                                      );                                    }
+                                        context,
+                                        'enter_mobile',
+                                      );
+                                    }
 
                                     if (!isMobileAvailable) {
                                       return AppStrings.translate(
-                                          context,
-                                          'mobile_registered'
-                                      );                                    }
+                                        context,
+                                        'mobile_registered',
+                                      );
+                                    }
 
                                     return null;
                                   },
                                 ),
                               ),
                               CustomTextField(
-                                title: AppStrings.translate(context,'username'),
+                                title: AppStrings.translate(
+                                  context,
+                                  'username',
+                                ),
                                 showRequiredSign: true,
                                 textInputType: TextInputType.emailAddress,
                                 textInputAction: TextInputAction.next,
                                 length: 20,
                                 lines: 1,
                                 textController: userNameController,
+
+                                onChanged: (value) {
+                                  checkUsername(value!);
+                                  if (value.trim().isEmpty) {
+                                    provider.error = null;
+                                    provider.notifyListeners();
+                                  }
+                                },
+
                                 validator: (value) {
                                   if (value!.trim().isEmpty) {
                                     return AppStrings.translate(
-                                        context,
-                                        'enter_username'
-                                    );                                  }
-
+                                      context,
+                                      'enter_username',
+                                    );
+                                  }
+                                  if (isUserNameAvailable == false) {
+                                    return userNameMessage ??
+                                        AppStrings.translate(
+                                          context,
+                                          'username_registered',
+                                        );
+                                  }
                                   return null;
                                 },
                               ),
@@ -236,22 +288,27 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                 textInputAction: TextInputAction.next,
                                 length: 20,
                                 lines: 1,
-                                title: AppStrings.translate(context,'password'),
+                                title: AppStrings.translate(
+                                  context,
+                                  'password',
+                                ),
                                 showRequiredSign: true,
                                 textController: passwordController,
                                 isPassword: true,
                                 validator: (value) {
                                   if (value == null || value.trim().isEmpty) {
                                     return AppStrings.translate(
-                                        context,
-                                        'enter_password'
-                                    );                                  }
+                                      context,
+                                      'enter_password',
+                                    );
+                                  }
 
-                                  if (value.length < 8) {
+                                  if (!validPassword(value)) {
                                     return AppStrings.translate(
-                                        context,
-                                        'password_8'
-                                    );                                  }
+                                      context,
+                                      'password_8',
+                                    );
+                                  }
 
                                   return null;
                                 },
@@ -262,8 +319,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                 length: 20,
                                 lines: 1,
                                 title: AppStrings.translate(
-                                    context,
-                                    'confirm_password'
+                                  context,
+                                  'confirm_password',
                                 ),
                                 showRequiredSign: true,
                                 textController: confirmPasswordController,
@@ -271,25 +328,29 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                 validator: (value) {
                                   if (value == null || value.trim().isEmpty) {
                                     return AppStrings.translate(
-                                        context,
-                                        'confirm_password_enter'
-                                    );                                  }
+                                      context,
+                                      'confirm_password_enter',
+                                    );
+                                  }
 
-                                  if (value.length < 8) {
+                                  if (!validPassword(value)) {
                                     return AppStrings.translate(
-                                        context,
-                                        'password_8'
-                                    );                                  }
+                                      context,
+                                      'password_8',
+                                    );
+                                  }
 
                                   if (value != passwordController.text) {
                                     return AppStrings.translate(
-                                        context,
-                                        'password_not_match'
-                                    );                                  }
+                                      context,
+                                      'password_not_match',
+                                    );
+                                  }
 
                                   return null;
                                 },
                               ),
+
                               CustomTextField(
                                 title: AppStrings.translate(context, 'email'),
                                 showRequiredSign: true,
@@ -321,20 +382,25 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
                                   _emailDebounce = Timer(
                                     const Duration(milliseconds: 500),
-                                        () async {
+                                    () async {
                                       await context
                                           .read<RegisterProvider>()
                                           .checkRegistrationEmail(value.trim());
 
-                                      final response = context.read<RegisterProvider>().data;
+                                      final response = context
+                                          .read<RegisterProvider>()
+                                          .data;
 
                                       if (!mounted) return;
 
-                                      if (response != null && response['email'] != null) {
+                                      if (response != null &&
+                                          response['email'] != null) {
                                         setState(() {
                                           isEmailAvailable =
-                                              response['email']['status'] == 'AVAILABLE';
-                                          emailMessage = response['email']['message'];
+                                              response['email']['status'] ==
+                                              'AVAILABLE';
+                                          emailMessage =
+                                              response['email']['message'];
                                         });
                                       }
                                     },
@@ -342,27 +408,33 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                 },
                                 validator: (value) {
                                   if (value == null || value.trim().isEmpty) {
-                                    return AppStrings.translate(context, 'enter_email');
+                                    return AppStrings.translate(
+                                      context,
+                                      'enter_email',
+                                    );
                                   }
 
                                   if (!validEmail(value.trim())) {
-                                    return AppStrings.translate(context, 'invalid_email');
+                                    return AppStrings.translate(
+                                      context,
+                                      'invalid_email',
+                                    );
                                   }
 
                                   // Only validate after API response
                                   if (isEmailAvailable == false) {
                                     return emailMessage ??
-                                        AppStrings.translate(context, 'email_registered');
+                                        AppStrings.translate(
+                                          context,
+                                          'email_registered',
+                                        );
                                   }
 
                                   return null;
                                 },
                               ),
                               CustomTextField(
-                                title: AppStrings.translate(
-                                    context,
-                                    'gender'
-                                ),
+                                title: AppStrings.translate(context, 'gender'),
                                 showRequiredSign: true,
                                 textInputAction: TextInputAction.done,
                                 textController: genderController,
@@ -378,14 +450,15 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                           selected.toLowerCase(),
                                         ); // पुरुष
                                   }
-                                  },
+                                },
                                 suffix: Icon(Icons.arrow_drop_down, size: 24),
                                 validator: (value) {
                                   if (value!.trim().isEmpty) {
                                     return AppStrings.translate(
-                                        context,
-                                        'select_gender'
-                                    );                                  }
+                                      context,
+                                      'select_gender',
+                                    );
+                                  }
 
                                   return null;
                                 },
@@ -404,16 +477,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                   onPressed: () async {
                                     if (_formKey.currentState?.validate() ??
                                         false) {
-                                      List<String> parts = fullNameController.text
-                                          .trim().split(" ");
-                                      String firstName = parts[0];
-                                      String lastName = parts.length > 1 ? parts[1] : "";
+
                                       final requestBody = {
                                         "email": emailController.text.trim(),
                                         "password": passwordController.text
                                             .trim(),
-                                        "firstName":firstName,
-                                        "lastName": lastName,
+                                        "firstName": firstNameController.text.trim(),
+                                        "lastName": lastNameController.text.trim(),
                                         "mobile": mobileController.text.trim(),
                                         "address": addressController.text
                                             .trim(),
@@ -461,21 +531,18 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                         ).showSnackBar(
                                           SnackBar(
                                             content: Text(
-                                                AppStrings.translate(
-                                                  context,
-                                                  'registration_failed',
-                                                )
+                                              AppStrings.translate(
+                                                context,
+                                                'registration_failed',
+                                              ),
                                             ),
                                           ),
                                         );
                                       }
                                     }
                                   },
-                                  child:   Text(
-                                    AppStrings.translate(
-                                        context,
-                                        'register'
-                                    ),
+                                  child: Text(
+                                    AppStrings.translate(context, 'register'),
                                     style: TextStyle(
                                       fontSize: 16,
                                       color: Colors.white,
@@ -487,12 +554,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                    Text(
-                                      AppStrings.translate(
-                                          context,
-                                          'already_account'
-                                      ),
-                                      style: TextStyle(
+                                  Text(
+                                    AppStrings.translate(
+                                      context,
+                                      'already_account',
+                                    ),
+                                    style: TextStyle(
                                       fontSize: 16,
                                       color: Colors.black,
                                     ),
@@ -507,11 +574,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                         ),
                                       );
                                     },
-                                    child:   Text(
-                                      AppStrings.translate(
-                                          context,
-                                          'log_in'
-                                      ),
+                                    child: Text(
+                                      AppStrings.translate(context, 'log_in'),
                                       style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold,
@@ -522,11 +586,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                 ],
                               ),
                               12.height(),
-                                Text(
-                                  AppStrings.translate(
-                                      context,
-                                      'version'
-                                  ),
+                              Text(
+                                AppStrings.translate(context, 'version'),
                                 style: TextStyle(
                                   fontSize: 12,
                                   color: Colors.grey,
@@ -545,11 +606,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   width: double.infinity,
                   color: const Color(0xFF7A1236),
                   padding: const EdgeInsets.all(12),
-                  child:   Text(
-                    AppStrings.translate(
-                        context,
-                        'copyright'
-                    ),
+                  child: Text(
+                    AppStrings.translate(context, 'copyright'),
                     textAlign: TextAlign.center,
                     style: TextStyle(color: Colors.white, fontSize: 11),
                   ),
@@ -566,6 +624,42 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     final parts = dob.split('-');
 
     return "${parts[2]}-${parts[1]}-${parts[0]}";
+  }
+
+  Timer? _debounce;
+
+  void checkUsername(String username) {
+    if (_debounce?.isActive ?? false) {
+      _debounce!.cancel();
+    }
+
+    _debounce = Timer(const Duration(milliseconds: 500), () async {
+      if (username.trim().isEmpty) return;
+
+      try {
+
+        final response =  await context
+            .read<RegisterProvider>()
+            .checkUserNameRegistration(
+          userNameController.text.trim(),
+        );
+        if (response) {
+          isUserNameAvailable=true;
+          userNameMessage="Available";
+
+          debugPrint('Username available');
+
+        } else {
+          isUserNameAvailable=false;
+          userNameMessage="Username already exists";
+          debugPrint('Username exists');
+
+        }
+
+      } catch (e) {
+        debugPrint('Username API error: $e');
+      }
+    });
   }
 
   @override

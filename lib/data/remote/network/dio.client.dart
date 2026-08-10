@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:nmc_wrapper/data/remote/network/api.end.points.dart';
 import 'package:nmc_wrapper/utils/logger.dart';
 
@@ -52,7 +53,7 @@ class DioClient {
         },
         onError: (DioException e, handler) async {
           logger("ERROR: ${e.response?.statusCode}");
-          logger("Message: ${e.message}");
+          // logger("Message: ${e.message}");
 
           // Handle token expiry (401)
           if (e.response?.statusCode == 400) {
@@ -80,24 +81,50 @@ class DioClient {
 
   // POST METHOD
   Future<Response> post(
-    String path, {
-    dynamic data,
-    Map<String, dynamic>? queryParams,
-    Map<String, dynamic>? headers,
-    bool isFormData = false,
-  }) async {
-    return dio.post(
-      path,
-      data: isFormData ? FormData.fromMap(data) : data,
-      queryParameters: queryParams,
-      options: Options(
-        headers: headers,
-        contentType: isFormData
-            ? Headers.formUrlEncodedContentType
-            : Headers.jsonContentType,
-      ),
-    );
+      String path, {
+        dynamic data,
+        Map<String, dynamic>? queryParams,
+        Map<String, dynamic>? headers,
+        bool isFormData = false,
+      }) async {
+    try {
+      final response = await dio.post(
+        path,
+        data: isFormData ? FormData.fromMap(data) : data,
+        queryParameters: queryParams,
+        options: Options(
+          headers: headers,
+          contentType: isFormData
+              ? Headers.formUrlEncodedContentType
+              : Headers.jsonContentType,
+        ),
+      );
+
+      return response;
+    } on DioException catch (e) {
+      debugPrint('========== POST API ERROR ==========');
+      // debugPrint('URL: ${e.requestOptions.uri}');
+      debugPrint('STATUS CODE: ${e.response?.statusCode}');
+      // debugPrint('REQUEST DATA: ${e.requestOptions.data}');
+      debugPrint('RESPONSE DATA: ${e.response?.data}');
+      // debugPrint('MESSAGE: ${e.message}');
+      // debugPrint('====================================');
+
+      // Preserve the original DioException including response.data
+      throw DioException(
+        requestOptions: e.requestOptions,
+        response: e.response,
+        type: e.type,
+        error: e.error,
+        stackTrace: e.stackTrace,
+        message: e.response?.data?.toString() ?? e.message,
+      );
+    } catch (e) {
+      debugPrint('POST API ERROR: $e');
+      rethrow;
+    }
   }
+
   // POST METHOD
   Future<Response> postMultipart(
       String path, {

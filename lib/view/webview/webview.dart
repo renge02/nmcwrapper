@@ -32,6 +32,8 @@ class _WebPageState extends State<WebPage> {
   final String webUrlRequest = '${ApiEndPoints.baseAPIUrl}/upyog-ui/citizen';
   final String webDeptUrlRequest =
       '${ApiEndPoints.baseAPIUrl}/upyog-ui/employee/user/login';
+  final String loginURL="${ApiEndPoints.baseAPIUrl}/upyog-ui/citizen/login";
+
 
   bool isInjected = false;
   bool isLoading = true;
@@ -251,7 +253,7 @@ class _WebPageState extends State<WebPage> {
                   final url = uri.toString();
 
                   // Logout detection
-                  if (url == webUrlRequest || url == webDeptUrlRequest) {
+                  if (url == webUrlRequest || url == webDeptUrlRequest||url==loginURL) {
                     await getIt<SecureStorage>().deleteAll();
 
                     if (!mounted) return NavigationActionPolicy.CANCEL;

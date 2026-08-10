@@ -299,6 +299,10 @@ class _LoginScreenState extends State<LoginScreen>
             GestureDetector(
               onTap: () {
                 // Navigate to Register Screen
+              /*  String url='https://mynashik.nmc.gov.in/nmc/en/register?tenant=nmc';
+                context.pushWidget(
+                  WebPage(webUrl: url, token: '', userData: '',),
+                );*/
                 context.pushWidget(RegistrationScreen());
               },
               child: Text(
