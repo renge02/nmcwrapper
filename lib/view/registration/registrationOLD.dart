@@ -41,6 +41,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   bool isMobileAvailable = true;
   bool? isEmailAvailable; // null = not checked yet
   String? emailMessage;
+  Timer? _usernameDebounce;
   bool? isUserNameAvailable; // null = not checked yet
   String? userNameMessage;
   Timer? _emailDebounce;
@@ -643,10 +644,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             .checkUserNameRegistration(
           userNameController.text.trim(),
         );
+        print("response  $response");
         if (response) {
           isUserNameAvailable=true;
           userNameMessage="Available";
-
           debugPrint('Username available');
 
         } else {

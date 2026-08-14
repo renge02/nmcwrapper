@@ -1,0 +1,553 @@
+import 'dart:async';
+
+import 'package:flutter/material.dart';
+import 'package:nmc_wrapper/repository/language/LanguageProvider.dart';
+import 'package:nmc_wrapper/repository/registerRepo/register.repo.dart';
+import 'package:nmc_wrapper/utils/app_strings.dart';
+import 'package:nmc_wrapper/utils/extensions.dart';
+import 'package:nmc_wrapper/utils/logger.dart';
+import 'package:nmc_wrapper/view/login/login.dart';
+
+import 'package:nmc_wrapper/view/shared/widgets/custom_date_picker.dart';
+import 'package:nmc_wrapper/view/shared/widgets/custom_text_field.dart';
+import 'package:nmc_wrapper/view/shared/widgets/dialog_gender.dart';
+import 'package:nmc_wrapper/view/widgets/email.widget.dart';
+import 'package:nmc_wrapper/view/widgets/mobile.widget.dart';
+import 'package:nmc_wrapper/view/widgets/username.widget.dart';
+import 'package:provider/provider.dart';
+
+import '../../../repository/registerRepo/service.locator.dart';
+import '../forget_password/otp_verify.dart';
+
+class RegistrationScreen extends StatefulWidget {
+  const RegistrationScreen({super.key});
+
+  @override
+  State<RegistrationScreen> createState() => _RegistrationScreenState();
+}
+
+class _RegistrationScreenState extends State<RegistrationScreen> {
+  final _formKey = GlobalKey<FormState>();
+
+  bool isPasswordVisible = false;
+  bool isConfirmPasswordVisible = false;
+ final firstNameController = TextEditingController();
+  final lastNameController = TextEditingController();
+  final userNameController = TextEditingController();
+  final mobileController = TextEditingController();
+  final addressController = TextEditingController();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  final genderController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
+
+  bool isMobileAvailable = true;
+  bool isUserNameAvailable=false;
+  bool? isEmailAvailable; // null = not checked yet
+  String? emailMessage;
+  Timer? _emailDebounce;
+  String? selectedGender;
+
+  final TextEditingController dobController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Color(0xFF0F4C75),
+      body: Consumer<RegisterProvider>(
+        builder: (BuildContext context, RegisterProvider provider, Widget? child) {
+          provider.isLoading ? context.showLoader() : context.hideLoader();
+
+          if (provider.error != null) {}
+
+          if (provider.data != null) {
+            logger(provider.data.toString());
+          }
+          return SafeArea(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                BackButton(color: Colors.white),
+                Expanded(
+                  child: Center(
+                    child: SingleChildScrollView(
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 20),
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Form(
+                          key: _formKey,
+                          autovalidateMode: AutovalidateMode.disabled,
+                          child: Column(
+                            spacing: 8,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Image.asset(
+                                'assets/images/nmc_logo.png',
+                                // replace with your logo
+                                height: 44,
+                              ),
+                              6.height(),
+                              Row(
+                                children: [
+                                  Text(
+                                    AppStrings.translate(
+                                      context,
+                                      'citizen_registration',
+                                    ),
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xFF7A1236),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              CustomTextField(
+                                title: AppStrings.translate(
+                                  context,
+                                  'first_name',
+                                ),
+                                showRequiredSign: true,
+                                textInputAction: TextInputAction.next,
+                                length: 80,
+                                lines: 1,
+                                textController: firstNameController,
+                                validator: (value) {
+                                  if (value!.trim().isEmpty) {
+                                    return AppStrings.translate(
+                                      context,
+                                      'please_enter_first_name',
+                                    );
+                                  }
+
+                                  return null;
+                                },
+                              ),
+                              CustomTextField(
+                                title: AppStrings.translate(
+                                  context,
+                                  'last_name',
+                                ),
+                                showRequiredSign: true,
+                                textInputAction: TextInputAction.next,
+                                length: 80,
+                                lines: 1,
+                                textController: lastNameController,
+                                validator: (value) {
+                                  if (value!.trim().isEmpty) {
+                                    return AppStrings.translate(
+                                      context,
+                                      'please_enter_last_name',
+                                    );
+                                  }
+                                  return null;
+                                },
+                              ),
+                              CustomTextField(
+                                title: AppStrings.translate(context, 'dob'),
+                                showRequiredSign: true,
+                                textInputAction: TextInputAction.next,
+                                textController: dobController,
+                                readOnly: true,
+                                onTap: () async {
+                                  final locale = context
+                                      .read<LanguageProvider>()
+                                      .locale;
+                                  final today = DateTime.now();
+
+                                  final eighteenYearsAgo = DateTime(
+                                    today.year - 18,
+                                    today.month,
+                                    today.day,
+                                  );
+
+                                  var dob = await pickDate(
+                                    locale: locale,
+                                    context: context,
+                                    initialDate: eighteenYearsAgo,
+                                    firstDate: DateTime(1900),
+                                    lastDate: eighteenYearsAgo,
+                                  );
+                                  if (dob != null) {
+                                    dobController.text =
+                                        '${dob.day.toString().padLeft(2, '0')}-${dob.month.toString().padLeft(2, '0')}-${dob.year}';
+                                  }
+                                },
+                                suffix: Icon(Icons.calendar_month, size: 24),
+                                validator: (value) {
+                                  if (value!.trim().isEmpty) {
+                                    return AppStrings.translate(
+                                      context,
+                                      'select_dob',
+                                    );
+                                  }
+
+                                  return null;
+                                },
+                              ),
+                              MobileAvailabilityField(
+                                controller: mobileController,
+                                onAvailabilityChanged: (available) {
+                                  setState(() {
+                                    isMobileAvailable = available ?? false;
+                                  });
+                                },
+                              ),
+
+                              UsernameAvailabilityField(controller: userNameController,
+                                onAvailabilityChanged: (available) {
+                                  setState(() {
+                                    isUserNameAvailable = available ?? false;
+                                  });
+                                },)
+
+                              // CustomTextField(
+                              //   title: AppStrings.translate(
+                              //     context,
+                              //     'username',
+                              //   ),
+                              //   showRequiredSign: true,
+                              //   textInputType: TextInputType.emailAddress,
+                              //   textInputAction: TextInputAction.next,
+                              //   length: 20,
+                              //   lines: 1,
+                              //   textController: userNameController,
+                              //   validator: (value) {
+                              //     if (value!.trim().isEmpty) {
+                              //       return AppStrings.translate(
+                              //         context,
+                              //         'enter_username',
+                              //       );
+                              //     }
+
+                              //     return null;
+                              //   },
+                              // ),
+                              ,
+                              CustomTextField(
+                                textInputType: TextInputType.visiblePassword,
+                                textInputAction: TextInputAction.next,
+                                length: 20,
+                                lines: 1,
+                                title: AppStrings.translate(
+                                  context,
+                                  'password',
+                                ),
+                                showRequiredSign: true,
+                                textController: passwordController,
+                                isPassword: true,
+                                validator: validatePassword,
+                              ),
+                              CustomTextField(
+                                textInputType: TextInputType.visiblePassword,
+                                textInputAction: TextInputAction.next,
+                                length: 20,
+                                lines: 1,
+                                title: AppStrings.translate(
+                                  context,
+                                  'confirm_password',
+                                ),
+                                showRequiredSign: true,
+                                textController: confirmPasswordController,
+                                isPassword: true,
+                                validator: (value) {
+                                  if (value == null || value.trim().isEmpty) {
+                                    return AppStrings.translate(
+                                      context,
+                                      'confirm_password_enter',
+                                    );
+                                  }
+
+                                  if (value.length < 8) {
+                                    return AppStrings.translate(
+                                      context,
+                                      'password_8',
+                                    );
+                                  }
+
+                                  if (value != passwordController.text) {
+                                    return AppStrings.translate(
+                                      context,
+                                      'password_not_match',
+                                    );
+                                  }
+
+                                  return null;
+                                },
+                              ),
+                              EmailAvailabilityField(
+                                controller: emailController,
+                                onAvailabilityChanged: (available) {
+                                  setState(() {
+                                    isEmailAvailable = available;
+                                  });
+                                },
+                              ),
+                              CustomTextField(
+                                title: AppStrings.translate(context, 'gender'),
+                                showRequiredSign: true,
+                                textInputAction: TextInputAction.done,
+                                textController: genderController,
+                                readOnly: true,
+                                onTap: () async {
+                                  var selected = await pickGender(context);
+                                  if (selected != null) {
+                                    selectedGender = selected; // Male
+
+                                    genderController.text =
+                                        AppStrings.translate(
+                                          context,
+                                          selected.toLowerCase(),
+                                        ); // पुरुष
+                                  }
+                                },
+                                suffix: Icon(Icons.arrow_drop_down, size: 24),
+                                validator: (value) {
+                                  if (value!.trim().isEmpty) {
+                                    return AppStrings.translate(
+                                      context,
+                                      'select_gender',
+                                    );
+                                  }
+
+                                  return null;
+                                },
+                              ),
+                              8.height(),
+                              SizedBox(
+                                width: double.infinity,
+                                height: 48,
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFF7A1236),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                  ),
+
+                                  onPressed: () async {
+                                    FocusScope.of(context).unfocus();
+                                    if (isMobileAvailable != true) {
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                         SnackBar(
+                                          content: Text(
+                                            AppStrings.translate(context, "available_mobile"),
+                                          ),
+                                        ),
+                                      );
+                                      return;
+                                    }
+
+                                    if (isEmailAvailable != true) {
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                          SnackBar(
+                                          content: Text(
+                                            AppStrings.translate(context, "available_email"),
+                                          ),
+                                        ),
+                                      );
+                                      return;
+                                    }
+                                    if (isUserNameAvailable != true) {
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                          SnackBar(
+                                          content: Text(
+                                            AppStrings.translate(context, 'available_username'),
+                                          ),
+                                        ),
+                                      );
+                                      return;
+                                    }
+
+                                    if (_formKey.currentState?.validate() ??
+                                        false) {
+                                     
+                                      String firstName = firstNameController.text.trim();
+                                      String lastName = lastNameController.text.trim();
+                                      final requestBody = {
+                                        "email": emailController.text.trim(),
+                                        "password": passwordController.text
+                                            .trim(),
+                                        "firstName": firstName,
+                                        "lastName": lastName,
+                                        "mobile": mobileController.text.trim(),
+                                        "address": addressController.text
+                                            .trim(),
+                                        "stakeholderType": "applicant",
+                                        "roleId": 2,
+                                        "tenant": "nmc",
+                                        "username": userNameController.text
+                                            .trim(),
+                                        "gender": selectedGender!.toUpperCase(),
+                                        "dateOfBirth": _formatDobForApi(
+                                          dobController.text.trim(),
+                                        ),
+                                        "otpVerificationToken": "",
+                                      };
+
+                                      getIt<RegistrationRequest>().data =
+                                          requestBody;
+
+                                      logger("Stored Request: $requestBody");
+
+                                      final success = await context
+                                          .read<RegisterProvider>()
+                                          .sendOtpRegistration(
+                                            mobileController.text.trim(),
+                                          );
+
+                                      if (!mounted) return;
+
+                                      if (success) {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (_) =>
+                                                OtpVerificationScreen(
+                                                  mobile: mobileController.text
+                                                      .trim(),
+                                                  isComeFrom: "1",
+                                                  userType: "CITIZEN",
+                                                ),
+                                          ),
+                                        );
+                                      } else {
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
+                                          SnackBar(
+                                            content: Text(
+                                              AppStrings.translate(
+                                                context,
+                                                'registration_failed',
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      }
+                                    }
+                                  },
+                                  child: Text(
+                                    AppStrings.translate(context, 'register'),
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              15.height(),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    AppStrings.translate(
+                                      context,
+                                      'already_account',
+                                    ),
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                  GestureDetector(
+                                    onTap: () {
+                                      // Navigate to Register Screen
+                                      Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => LoginScreen(),
+                                        ),
+                                      );
+                                    },
+                                    child: Text(
+                                      AppStrings.translate(context, 'log_in'),
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              12.height(),
+                              Text(
+                                AppStrings.translate(context, 'version'),
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+
+                /// FOOTER
+                Container(
+                  width: double.infinity,
+                  color: const Color(0xFF7A1236),
+                  padding: const EdgeInsets.all(12),
+                  child: Text(
+                    AppStrings.translate(context, 'copyright'),
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.white, fontSize: 11),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  String _formatDobForApi(String dob) {
+    final parts = dob.split('-');
+
+    return "${parts[2]}-${parts[1]}-${parts[0]}";
+  }
+
+  @override
+  void dispose() {
+    _emailDebounce?.cancel();
+    emailController.dispose();
+    super.dispose();
+  }
+
+  String? validatePassword(String? value) {
+    if (value == null || value.isEmpty) {
+      return AppStrings.translate(context, "password_required");
+    }
+    if (value.length < 8) {
+      return AppStrings.translate(context, 'password_min_length');
+    }
+
+    final passwordRegex = RegExp(
+      r'^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$',
+    );
+
+    if (!passwordRegex.hasMatch(value)) {
+      return AppStrings.translate(
+        context,
+        'password_8',
+      );
+    }
+
+    return null;
+  }
+}

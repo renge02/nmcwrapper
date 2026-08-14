@@ -86,7 +86,8 @@ class DioClient {
         Map<String, dynamic>? queryParams,
         Map<String, dynamic>? headers,
         bool isFormData = false,
-      }) async {
+      }) async
+  {
     try {
       final response = await dio.post(
         path,
@@ -111,14 +112,7 @@ class DioClient {
       // debugPrint('====================================');
 
       // Preserve the original DioException including response.data
-      throw DioException(
-        requestOptions: e.requestOptions,
-        response: e.response,
-        type: e.type,
-        error: e.error,
-        stackTrace: e.stackTrace,
-        message: e.response?.data?.toString() ?? e.message,
-      );
+      rethrow;
     } catch (e) {
       debugPrint('POST API ERROR: $e');
       rethrow;

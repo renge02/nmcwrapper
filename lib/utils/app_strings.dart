@@ -27,25 +27,23 @@ class AppStrings {
       'male': 'Male',
       'female': 'Female',
       'other': 'Other',
-
       'citizen_registration': 'Citizen Registration',
       'first_name': 'First Name',
       'last_name': 'Last Name',
       'please_enter_first_name': 'Please enter first name',
       'please_enter_last_name': 'Please enter last name',
-
       'dob': 'DOB',
       'select_dob': 'Select DOB',
-
+      'available_mobile': 'Please enter an available mobile number',
+      'available_email': 'Please enter an available email address',
+      'available_username': 'Please enter an available Username',
       'mobile': 'Mobile',
       'enter_mobile': 'Please enter 10 digit mobile',
       'mobile_registered': 'Mobile number already registered',
-
-
       'password_8': 'Password must contain 8 characters, uppercase, lowercase, number and special character',
-
-
-  'confirm_password': 'Confirm Password',
+      'password_required': 'Password is required',
+      'password_min_length': 'Password must be at least 8 characters long',
+      'confirm_password': 'Confirm Password',
       'confirm_password_enter': 'Please confirm password',
       'password_not_match': 'Passwords do not match',
       'email': 'Email Id',
@@ -175,10 +173,16 @@ class AppStrings {
       'please_enter_last_name': 'कृपया आडनाव प्रविष्ट करा',
       'dob': 'जन्मतारीख',
       'select_dob': 'जन्मतारीख निवडा',
+      'available_mobile': 'कृपया उपलब्ध मोबाईल क्रमांक प्रविष्ट करा',
+      'available_email': 'कृपया उपलब्ध ई-मेल पत्ता प्रविष्ट करा',
+      'available_username': 'कृपया उपलब्ध वापरकर्तानाव प्रविष्ट करा',
       'mobile': 'मोबाईल',
       'enter_mobile': 'कृपया १० अंकी मोबाईल क्रमांक प्रविष्ट करा',
       'mobile_registered': 'मोबाईल क्रमांक आधीच नोंदणीकृत आहे',
       'password_8': 'पासवर्डमध्ये किमान ८ अक्षरे, एक मोठे अक्षर, एक छोटे अक्षर, एक अंक आणि एक विशेष चिन्ह असणे आवश्यक आहे',      'confirm_password': 'पासवर्डची पुष्टी करा',
+
+      'password_required': 'पासवर्ड आवश्यक आहे',
+      'password_min_length': 'पासवर्ड किमान ८ अक्षरांचा असणे आवश्यक आहे',
       'confirm_password_enter': 'कृपया पासवर्डची पुष्टी करा',
       'password_not_match': 'पासवर्ड जुळत नाहीत',
       'email': 'ईमेल आयडी',

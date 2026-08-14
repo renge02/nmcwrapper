@@ -7,7 +7,7 @@ import 'package:nmc_wrapper/utils/extensions.dart';
 import 'package:nmc_wrapper/utils/secure.storage.dart';
 import 'package:nmc_wrapper/view/dashboard/dashboard.dart';
 import 'package:nmc_wrapper/view/forget_password/forget_screen.dart';
-import 'package:nmc_wrapper/view/registration/registration.dart';
+import 'package:nmc_wrapper/view/registration!/registration.dart';
 import 'package:nmc_wrapper/view/shared/widgets/custom_alert.dart';
 import 'package:nmc_wrapper/view/shared/widgets/custom_text_field.dart';
 import 'package:nmc_wrapper/view/webview/webview.dart';
@@ -76,22 +76,49 @@ class _LoginScreenState extends State<LoginScreen>
           value: provider,
           child: Consumer<LoginProvider>(
             builder: (ctx, provider, _) {
-              provider.isLoading
-                  ? context.showLoader(fullScreen: true)
-                  : context.hideLoader();
+              if (provider.isLoading) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (mounted) {
+                    context.showLoader(fullScreen: true);
+                  }
+                });
+              } else {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (mounted) {
+                    context.hideLoader();
+                  }
+                });
+              }
+
 
               if (provider.error != null) {
-                showAlert(context, 'Unable to login, ${provider.error}');
+                final errorMessage = provider.error!;
+
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (!mounted) return;
+
+                  showAlert(
+                    context,
+                    'Unable to login, $errorMessage',
+                  );
+
+                  // Clear error after showing dialog
+                  provider.clearData();
+                });
               }
 
               if (provider.data != null) {
-                if (_tabController.index == 1) {
-                  departmentlogin();
-                } else {
-                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                    context.pushReplacementWidget(const DashboardScreen());
-                  });
-                }
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (!mounted) return;
+
+                  if (_tabController.index == 1) {
+                    departmentlogin();
+                  } else {
+                    context.pushReplacementWidget(
+                      const DashboardScreen(),
+                    );
+                  }
+                });
               }
               return SafeArea(
                 child: Column(

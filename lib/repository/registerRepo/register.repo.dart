@@ -151,40 +151,51 @@ Future<bool> sendOtpRegistration(String mobile) async {
       final response =
       await _service.checkUsernameRegistration(userName);
 
-      // Store complete API response
+      debugPrint('Provider response: ${response.data}');
+      debugPrint('Provider type: ${response.data.runtimeType}');
+
       data = response.data;
 
-      // Get API message
-      final String? message = response.data['message']?.toString();
+      final responseData =
+      Map<String, dynamic>.from(response.data);
 
-      // Get API status
-      final int? status =
-      response.data['responseInfo']?['status'];
+      final bool valid = responseData['valid'] == true;
 
-      // Username available
-      if (response.data['valid'] == true &&
-          message == 'Username is available') {
+      final String? message =
+      responseData['message']?.toString();
+
+      debugPrint('Username valid: $valid');
+      debugPrint('Username message: $message');
+
+      if (valid) {
+        error = null;
         return true;
       }
 
-      // Username already exists / API validation failed
-      if (response.data['valid'] == false) {
-        error = message ?? 'Username is not available';
-        return false;
-      }
-
-      // Handle unexpected response
-      error = message ?? 'Unable to check username';
+      error = message ?? 'Username is not available';
       return false;
-    } catch (e) {
+
+    } on DioException catch (e) {
+      error = e.response?.data is Map
+          ? e.response?.data['message']?.toString() ??
+          'Something went wrong'
+          : e.message ?? 'Something went wrong';
+
+      debugPrint('Username API exception: $error');
+
+      return false;
+    } catch (e, stackTrace) {
       error = e.toString();
+
+      debugPrint('Username unexpected error: $e');
+      debugPrint('$stackTrace');
+
       return false;
     } finally {
       isLoading = false;
       notifyListeners();
     }
   }
-
   Future<bool> verifyOtp(String mobile, String otp) async {
     try {
       isLoading = true;

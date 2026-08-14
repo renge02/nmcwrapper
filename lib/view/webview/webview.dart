@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'dart:io';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:nmc_wrapper/data/remote/network/api.end.points.dart';
@@ -7,6 +9,7 @@ import 'package:nmc_wrapper/utils/secure.storage.dart';
 import 'package:nmc_wrapper/view/login/login.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:external_path/external_path.dart';
 
 class WebPage extends StatefulWidget {
   final String token;
@@ -19,7 +22,7 @@ class WebPage extends StatefulWidget {
     required this.token,
     required this.userData,
     required this.webUrl,
-      this.userType='CITIZEN',
+    this.userType = 'CITIZEN',
   });
 
   @override
@@ -32,8 +35,7 @@ class _WebPageState extends State<WebPage> {
   final String webUrlRequest = '${ApiEndPoints.baseAPIUrl}/upyog-ui/citizen';
   final String webDeptUrlRequest =
       '${ApiEndPoints.baseAPIUrl}/upyog-ui/employee/user/login';
-  final String loginURL="${ApiEndPoints.baseAPIUrl}/upyog-ui/citizen/login";
-
+  final String loginURL = "${ApiEndPoints.baseAPIUrl}/upyog-ui/citizen/login";
 
   bool isInjected = false;
   bool isLoading = true;
@@ -80,7 +82,9 @@ class _WebPageState extends State<WebPage> {
     final String escapedTenantId = jsonEncode("pg.cityb");
     final escapedUserType = jsonEncode(widget.userType);
 
-    await controller!.evaluateJavascript(source: '''
+    await controller!.evaluateJavascript(
+      source:
+          '''
        (function () {
   try {
     const raw = JSON.parse($escapedUserData);
@@ -142,9 +146,10 @@ class _WebPageState extends State<WebPage> {
   } catch (e) {
     console.error("WebView token injection failed", e);
   }
-})();''');
+})();''',
+    );
 
-   /* await controller!.evaluateJavascript(
+    /* await controller!.evaluateJavascript(
       source:
           """
       (function () {
@@ -229,23 +234,136 @@ class _WebPageState extends State<WebPage> {
                 initialUrlRequest: URLRequest(url: WebUri(widget.webUrl)),
                 initialSettings: InAppWebViewSettings(
                   javaScriptEnabled: true,
+
+                  javaScriptCanOpenWindowsAutomatically: true,
+                  supportMultipleWindows: true,
+
                   useShouldOverrideUrlLoading: true,
                   mediaPlaybackRequiresUserGesture: false,
                   allowsInlineMediaPlayback: true,
                   useHybridComposition: true,
                   geolocationEnabled: true,
+                  preferredContentMode: UserPreferredContentMode.DESKTOP,
                 ),
                 onWebViewCreated: (ctrl) {
                   controller = ctrl;
+
+                  ctrl.addJavaScriptHandler(
+                    handlerName: 'downloadBlob',
+                    callback: (args) async {
+                      if (args.isEmpty) return;
+
+                      final data = args[0];
+
+                      final String base64Data = data['data'];
+                      final String fileName = data['fileName'];
+
+                      await saveBase64File(base64Data, "acknowledgement-$fileName");
+                    },
+                  );
+
+                  ctrl.addJavaScriptHandler(
+                    handlerName: 'printPage',
+                    callback: (args) async {
+                      debugPrint('========== PRINT REQUESTED ==========');
+
+                      try {
+                        await ctrl.printCurrentPage();
+
+                        debugPrint('Print dialog requested');
+                      } catch (e) {
+                        debugPrint('Print error: $e');
+                      }
+
+                      return true;
+                    },
+                  );
                 },
                 onLoadStart: (ctrl, url) {
                   setState(() => isLoading = true);
                 },
                 onLoadStop: (ctrl, url) async {
                   await injectSession();
-                  setState(() => isLoading = false);
 
+                  await ctrl.evaluateJavascript(
+                    source: '''
+      (function() {
+        try {
+          if (!window.__flutterPrintOverridden) {
+
+            window.__originalPrint = window.print;
+
+            window.print = function() {
+              console.log("Flutter print called");
+
+              window.flutter_inappwebview.callHandler(
+                'printPage'
+              );
+            };
+
+            window.__flutterPrintOverridden = true;
+          }
+        } catch (e) {
+          console.error("Print override error:", e);
+        }
+      })();
+    ''',
+                  );
+
+                  if (mounted) {
+                    setState(() => isLoading = false);
+                  }
                 },
+
+                onDownloadStartRequest: (controller, downloadRequest) async {
+                  final url = downloadRequest.url.toString();
+                  final fileName =
+                      downloadRequest.suggestedFilename ?? 'download.csv';
+
+                  debugPrint('========== DOWNLOAD ==========');
+                  debugPrint('URL: $url');
+                  debugPrint('File name: $fileName');
+                  debugPrint('MIME type: ${downloadRequest.mimeType}');
+                  debugPrint('==============================');
+
+                  if (url.startsWith('blob:')) {
+                    await controller.evaluateJavascript(
+                      source:
+                          '''
+        (async function() {
+          try {
+            const response = await fetch('$url');
+            const blob = await response.blob();
+
+            const reader = new FileReader();
+
+            reader.onloadend = function() {
+              const base64 = reader.result.split(',')[1];
+
+              window.flutter_inappwebview.callHandler(
+                'downloadBlob',
+                {
+                  data: base64,
+                  fileName: '$fileName'
+                }
+              );
+            };
+
+            reader.readAsDataURL(blob);
+          } catch (error) {
+            console.error('Blob download error:', error);
+          }
+        })();
+      ''',
+                    );
+
+                    return;
+                  }
+
+                  // Normal HTTP/HTTPS download
+                  await downloadFile(url, fileName);
+                },
+
                 shouldOverrideUrlLoading: (ctrl, action) async {
                   final uri = action.request.url;
                   if (uri == null) return NavigationActionPolicy.ALLOW;
@@ -253,7 +371,9 @@ class _WebPageState extends State<WebPage> {
                   final url = uri.toString();
 
                   // Logout detection
-                  if (url == webUrlRequest || url == webDeptUrlRequest||url==loginURL) {
+                  if (url == webUrlRequest ||
+                      url == webDeptUrlRequest ||
+                      url == loginURL) {
                     await getIt<SecureStorage>().deleteAll();
 
                     if (!mounted) return NavigationActionPolicy.CANCEL;
@@ -280,7 +400,9 @@ class _WebPageState extends State<WebPage> {
                   }
 
                   // External apps
-                  if (url.contains("whatsapp") || url.startsWith("intent:")|| url.startsWith("upi:")) {
+                  if (url.contains("whatsapp") ||
+                      url.startsWith("intent:") ||
+                      url.startsWith("upi:")) {
                     await launchUrl(uri, mode: LaunchMode.externalApplication);
                     return NavigationActionPolicy.CANCEL;
                   }
@@ -313,19 +435,25 @@ class _WebPageState extends State<WebPage> {
                   final uri = request.url;
 
                   if (uri.scheme == "upi") {
-                    await launchUrl(
-                      uri,
-                      mode: LaunchMode.externalApplication,
-                    );
+                    await launchUrl(uri, mode: LaunchMode.externalApplication);
                   }
+                },
+                onUpdateVisitedHistory: (controller, url, androidIsReload) {
+                  debugPrint('VISITED URL: $url');
                 },
                 onCreateWindow: (controller, request) async {
                   final uri = request.request.url;
 
-                  debugPrint("Popup URL: $uri");
+                  debugPrint('========== POPUP ==========');
+                  debugPrint('Popup URL: $uri');
+                  debugPrint('============================');
 
-                  if (uri != null &&
-                      (uri.scheme == "upi" || uri.scheme == "intent")) {
+                  if (uri == null) {
+                    return false;
+                  }
+
+                  // UPI
+                  if (uri.scheme == 'upi') {
                     await launchUrl(
                       uri,
                       mode: LaunchMode.externalApplication,
@@ -334,8 +462,28 @@ class _WebPageState extends State<WebPage> {
                     return false;
                   }
 
+                  // Intent
+                  if (uri.scheme == 'intent') {
+                    await launchUrl(
+                      uri,
+                      mode: LaunchMode.externalApplication,
+                    );
+
+                    return false;
+                  }
+
+                  // Normal popup / print page
+                  debugPrint('Loading popup/print URL in current WebView');
+
+                  await controller.loadUrl(
+                    urlRequest: URLRequest(
+                      url: uri,
+                    ),
+                  );
+
                   return false;
-                },),
+                },              ),
+
               if (isLoading)
                 Container(
                   color: Colors.white70,
@@ -346,5 +494,109 @@ class _WebPageState extends State<WebPage> {
         ),
       ),
     );
+  }
+
+  Future<void> saveBase64File(String base64Data, String fileName) async {
+    try {
+      final bytes = base64Decode(base64Data);
+
+      final downloadPath = await ExternalPath.getExternalStoragePublicDirectory(
+        ExternalPath.DIRECTORY_DOWNLOAD,
+      );
+
+      final filePath = '$downloadPath/$fileName';
+
+      final file = File(filePath);
+
+      await file.writeAsBytes(bytes, flush: true);
+
+      debugPrint('========== FILE SAVED ==========');
+      debugPrint('File: ${file.path}');
+      debugPrint('Exists: ${await file.exists()}');
+      debugPrint('Size: ${await file.length()} bytes');
+      debugPrint('================================');
+    } catch (e, stackTrace) {
+      debugPrint('Save file error: $e');
+      debugPrint('$stackTrace');
+    }
+  }
+
+  Future<void> downloadFile(
+      String url,
+      String? suggestedFilename,
+      ) async {
+    try {
+      // Get WebView cookies
+      final cookies = await CookieManager.instance().getCookies(
+        url: WebUri(url),
+      );
+
+      final cookieHeader = cookies
+          .map((cookie) => '${cookie.name}=${cookie.value}')
+          .join('; ');
+
+      debugPrint('========== DOWNLOAD ==========');
+      debugPrint('URL: $url');
+      debugPrint('Cookies available: ${cookies.length}');
+
+      // Get public Downloads directory
+      final downloadPath =
+      await ExternalPath.getExternalStoragePublicDirectory(
+        ExternalPath.DIRECTORY_DOWNLOAD,
+      );
+
+      debugPrint('Download directory: $downloadPath');
+
+      // Static filename
+      const String fileName = 'acknowledgement.pdf';
+
+      final filePath = '$downloadPath/$fileName';
+
+      debugPrint('Saving to: $filePath');
+
+      final dio = Dio();
+
+      await dio.download(
+        url,
+        filePath,
+        options: Options(
+          headers: {
+            'Cookie': cookieHeader,
+            'Accept': '*/*',
+          },
+          responseType: ResponseType.bytes,
+          followRedirects: true,
+          validateStatus: (status) {
+            return status != null && status >= 200 && status < 400;
+          },
+        ),
+        onReceiveProgress: (received, total) {
+          if (total > 0) {
+            final progress =
+            (received / total * 100).toStringAsFixed(0);
+
+            debugPrint('Download: $progress%');
+          }
+        },
+      );
+
+      final file = File(filePath);
+
+      if (await file.exists()) {
+        final size = await file.length();
+
+        debugPrint('========== DOWNLOAD COMPLETE ==========');
+        debugPrint('File: ${file.path}');
+        debugPrint('Size: $size bytes');
+        debugPrint('========================================');
+      } else {
+        debugPrint('File was not created');
+      }
+    } catch (e, stackTrace) {
+      debugPrint('========== DOWNLOAD ERROR ==========');
+      debugPrint('ERROR: $e');
+      debugPrint('STACK TRACE: $stackTrace');
+      debugPrint('===================================');
+    }
   }
 }

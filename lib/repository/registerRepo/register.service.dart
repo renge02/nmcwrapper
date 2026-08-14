@@ -110,7 +110,7 @@ class RegisterService {
     );
   }
   Future<Response> checkUsernameRegistration(String userName) async {
-    var data = json.encode({
+    var data =  {
       "RequestInfo": {
         "apiId": "Rainmaker",
         "authToken": null,
@@ -118,7 +118,7 @@ class RegisterService {
       },
       "userName": userName,
       "tenantId": "pg"
-    });
+    };
     return await dioClient.post(
       ApiEndPoints.checkUserNameRegistrationEndPoint,
       headers: {
